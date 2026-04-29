@@ -62,7 +62,7 @@ public class Notification {
 
     private Instant updatedAt ;
     
-    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<NotificationChannelStatus> channels ;
     
     // 🔥 Automatically called before insert
