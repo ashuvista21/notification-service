@@ -3,12 +3,17 @@ package com.ashuvista21.notification.dispatcher;
 import java.util.Map ;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService ;
+import java.util.concurrent.Executors ;
 
 import org.springframework.kafka.annotation.KafkaListener ;
+import org.springframework.kafka.core.KafkaTemplate ;
+import org.springframework.messaging.handler.annotation.Payload ;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional ;
 
 import com.ashuvista21.notification.channel.NotificationChannel;
+import com.ashuvista21.notification.dtos.NotificationDispatcherDTO ;
 import com.ashuvista21.notification.entities.Notification;
 import com.ashuvista21.notification.entities.NotificationChannelStatus;
 import com.ashuvista21.notification.enums.NotificationCategory ;
@@ -30,6 +35,10 @@ public class NotificationDispatcher {
 	private final UserNotificationTypePreferenceService notificationTypePreferenceService ;
 	private final NotificationChannelFactory factory ;
 	private final NotificationRepository repository ;
+	private final ExecutorService executorService = Executors.newFixedThreadPool(5) ;
+	
+	private final KafkaTemplate<String, NotificationDispatcherDTO> kafkaTemplate;
+    private final String topic = "notification-dispatch" ;
 	
 	private static final Map<NotificationCategory, Set<NotificationChannelType>> DEFAULT_CHANNELS =
 	        Map.of(
@@ -79,7 +88,7 @@ public class NotificationDispatcher {
         // Persist notification in DB
         Notification entityNotification = repository.save(notification) ;
         
-        publish(notification.getId());
+        publish(new NotificationDispatcherDTO(notification.getId().toString())) ;
         
         for (NotificationChannelStatus channelStatus : entityNotification.getChannels()) {
             
@@ -98,33 +107,48 @@ public class NotificationDispatcher {
         }        
 	}
 	
-	@Transactional
-	@KafkaListener(topics = "notification-dispatch")
-	public void process(UUID notificationId) {
+	@KafkaListener(topics = topic)
+	public void process(@Payload NotificationDispatcherDTO notificationDispatcherDTO) {
+		
+		UUID notificationId = UUID.fromString(notificationDispatcherDTO.notificationId()) ;
 
-	    Notification notification = repository.findById(notificationId)
-	            .orElseThrow(() -> new RuntimeException("Invalid Notification identifier : " + notificationId.toString())) ;
+		Notification notification = repository.findById(notificationId)
+	            .orElseThrow(() -> new RuntimeException(
+	                    "Invalid Notification identifier : " + notificationId));
 
 	    for (NotificationChannelStatus channelStatus : notification.getChannels()) {
 
-	        NotificationChannel service =
-	                factory.getChannel(channelStatus.getChannelType()) ;
-
-	        try {
-	            //String providerId = service.send(notification) ;
-	            service.send(notification) ;
-
-	            channelStatus.setStatus(NotificationStatus.SENT) ;
-	            //channelStatus.setProviderMessageId(providerId) ;
-
-	        } catch (Exception e) {
-	            channelStatus.setStatus(NotificationStatus.FAILED) ;
-	            channelStatus.setErrorMessage(e.getMessage()) ;
-	            channelStatus.setRetryCount(channelStatus.getRetryCount() + 1) ;
-	        }
+	        executorService.submit(() ->
+	                processChannel(notificationId, channelStatus.getChannelType())
+	        );
 	    }
+	}
+	
+	@Transactional
+	private void processChannel(UUID notificationId, NotificationChannelType channelType) {
 
-	    notification.setStatus(calculateOverallStatus(notification));
+	    Notification notification = repository.findById(notificationId)
+	            .orElseThrow(() -> new RuntimeException("Notification not found")) ;
+
+	    NotificationChannelStatus channelStatus = notification.getChannels().stream()
+	            .filter(c -> c.getChannelType() == channelType)
+	            .findFirst()
+	            .orElseThrow() ;
+
+	    NotificationChannel service = factory.getChannel(channelType) ;
+
+	    try {
+	        service.send(notification) ;
+
+	        channelStatus.setStatus(NotificationStatus.SENT) ;
+
+	    } catch (Exception e) {
+	        channelStatus.setStatus(NotificationStatus.FAILED) ;
+	        channelStatus.setErrorMessage(e.getMessage()) ;
+	        channelStatus.setRetryCount(channelStatus.getRetryCount() + 1) ;
+	    }
+	    
+	    notification.setStatus(calculateOverallStatus(notification)) ;
 	}
 	
 	private Set<NotificationChannelType> resolveChannels(UUID userId, NotificationType notificationType) {
@@ -150,37 +174,62 @@ public class NotificationDispatcher {
 	}
 	
 	private NotificationStatus calculateOverallStatus(Notification notification) {
-		int size = notification.getChannels().size() ;
-		int success = 0 ;
-		boolean errorFlag = false ;
-		boolean failedFlag = false ;
-		
-		for (NotificationChannelStatus channelStatus : notification.getChannels()) {
-			if(channelStatus.getStatus().equals(NotificationStatus.SENT)) {
-				++success ;
-				continue ;
-			}
-			
-			if(!errorFlag && channelStatus.getStatus().equals(NotificationStatus.ERROR)) {
-				errorFlag = true ;
-			}
-			
-			if(!failedFlag && channelStatus.getStatus().equals(NotificationStatus.FAILED)) {
-				failedFlag = true ;
-			}
-		}
-		
-		if(errorFlag)
-			return NotificationStatus.ERROR ;
-		else if(failedFlag)
-			return NotificationStatus.FAILED ;
-		else if(success == size)
-			return NotificationStatus.SENT ;
-		else
-			return NotificationStatus.PENDING ;
+		int total = notification.getChannels().size() ;
+
+	    if (total == 0) {
+	        return NotificationStatus.PENDING ; // or FAILED based on your design
+	    }
+
+	    int success = 0 ;
+	    boolean hasError = false ;
+	    boolean hasFailure = false ;
+
+	    for (NotificationChannelStatus channelStatus : notification.getChannels()) {
+	        NotificationStatus status = channelStatus.getStatus() ;
+
+	        if (status == NotificationStatus.SENT) {
+	            success++ ;
+	        } else if (status == NotificationStatus.FAILED) {
+	            hasFailure = true ;
+	        } else if (status == NotificationStatus.ERROR) {
+	            hasError = true ;
+	        }
+	    }
+
+	    // ✅ All success
+	    if (success == total) {
+	        return NotificationStatus.SENT ;
+	    }
+
+	    // ✅ Partial success (most important addition)
+	    if (success > 0) {
+	        return NotificationStatus.PARTIALLY_SENT ;
+	    }
+
+	    // ✅ No success cases
+	    if (hasFailure) {
+	        return NotificationStatus.FAILED ;
+	    }
+
+	    if (hasError) {
+	        return NotificationStatus.ERROR ;
+	    }
+
+	    return NotificationStatus.PENDING ;
 	}
 	
-	private void publish(UUID notificationId) {
-		//produce kafka eevnt
+	private void publish(NotificationDispatcherDTO dispatcherDTO) {
+		kafkaTemplate.send(topic, dispatcherDTO.notificationId().toString(), dispatcherDTO)
+        .whenComplete((result, ex) -> {
+            if (ex != null) {
+                // Failure handling
+                //log.error("Failed to publish notification: {}", dispatcherDTO.getNotificationId(), ex);
+            } else {
+                // Success handling
+                //log.info("Published notification: {} to partition: {}",
+                //        dispatcherDTO.getNotificationId(),
+                //        result.getRecordMetadata().partition());
+            }
+        });
 	}
 }
