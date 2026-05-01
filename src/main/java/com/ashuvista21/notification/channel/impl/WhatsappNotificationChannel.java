@@ -1,7 +1,7 @@
 package com.ashuvista21.notification.channel.impl;
 
 import com.ashuvista21.notification.channel.NotificationChannel;
-import com.ashuvista21.notification.entities.Notification;
+import com.ashuvista21.notification.entities.NotificationChannelStatus ;
 import com.ashuvista21.notification.enums.NotificationChannelType;
 
 public class WhatsappNotificationChannel implements NotificationChannel {
@@ -12,7 +12,7 @@ public class WhatsappNotificationChannel implements NotificationChannel {
 	}
 
 	@Override
-	public void send(Notification notification) {
+	public void send(NotificationChannelStatus channelStatus) {
 		// TODO Auto-generated method stub
 
 	}
