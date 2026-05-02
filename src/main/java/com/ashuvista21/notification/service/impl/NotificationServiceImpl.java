@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.notificationType(notificationType)
 				.category(notificationType.getCategory())
 				.status(NotificationStatus.CREATED)
-				.payload(request.getVariables().toString())
+				.payload(request.getVariables())
 				.channels(new ArrayList<>())
 				.build() ;
 		

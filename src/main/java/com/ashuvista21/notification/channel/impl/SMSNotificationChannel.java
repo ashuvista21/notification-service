@@ -3,7 +3,7 @@ package com.ashuvista21.notification.channel.impl;
 import org.springframework.stereotype.Service;
 
 import com.ashuvista21.notification.channel.NotificationChannel;
-import com.ashuvista21.notification.entities.NotificationChannelStatus ;
+import com.ashuvista21.notification.dtos.ChannelPayload ;
 import com.ashuvista21.notification.enums.NotificationChannelType;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class SMSNotificationChannel implements NotificationChannel {
 	}
 
 	@Override
-	public void send(NotificationChannelStatus channelStatus) {
+	public void send(ChannelPayload channelPayload) {
 		
 	}
 
