@@ -18,12 +18,6 @@ public class NotificationController {
 	@PostMapping("/send")
     public void sendNotification(@RequestBody NotificationRequest notificationRequest) {
 		
-        notificationService.process(notificationRequest) ;
+        notificationService.createAndDispatch(notificationRequest) ;
     }
-	
-	/*@PostMapping("/send")
-	public String sendNotification() throws Exception {
-		FcmSender.sendMessage(token) ;
-		return "Notification sent successfully!";
-	}*/
 }
