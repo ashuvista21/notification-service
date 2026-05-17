@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AsyncConfig {
 	
-	@Bean("emailExecutor")
+	@Bean("notificationExecutor")
     Executor emailExecutor() {
         // tune corePoolSize/maximumPoolSize/queue based on load — example uses fixed pool
         return Executors.newFixedThreadPool(10) ;

@@ -21,6 +21,7 @@ public class KafkaConfigProperties {
     @Setter
     public static class Consumer {
         private String groupId ;
+        private int concurrency = 1 ; //default
     }
     
     // 🔥 Dynamic topics

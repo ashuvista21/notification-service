@@ -2,6 +2,7 @@ package com.ashuvista21.notification.entities;
 
 import java.time.Instant ;
 import java.util.List;
+import java.util.Map ;
 import java.util.UUID;
 
 import com.ashuvista21.notification.enums.NotificationCategory;
@@ -56,7 +57,7 @@ public class Notification {
     private NotificationStatus status ;
 
     @Column(columnDefinition = "TEXT")
-    private String payload ;   // JSON payload containing template data
+    private Map<String, Object> payload ;   // JSON payload containing template data
 
     private Instant createdAt ;
 
