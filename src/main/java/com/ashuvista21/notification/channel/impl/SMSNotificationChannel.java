@@ -4,21 +4,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient ;
 
 import com.ashuvista21.notification.channel.NotificationChannel;
-import com.ashuvista21.notification.config.SMSProperties ;
+import com.ashuvista21.notification.config.NotificationChannelProperties ;
+import com.ashuvista21.notification.config.NotificationChannelProperties.ChannelConfig ;
 import com.ashuvista21.notification.dtos.ChannelPayload ;
 import com.ashuvista21.notification.enums.NotificationChannelType;
 
 import lombok.AllArgsConstructor ;
 import lombok.Builder ;
 import lombok.Getter ;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
 public class SMSNotificationChannel implements NotificationChannel {
 	
 	private final WebClient webClient ;
-	private final SMSProperties smsProperties ; 
+	private final ChannelConfig channelConfig ;
+	
+	public SMSNotificationChannel(WebClient webClient, NotificationChannelProperties properties) {
+		this.webClient = webClient ;
+		this.channelConfig = properties.getChannels().getOrDefault(getChannelType(), null) ;
+		
+		if(this.channelConfig == null)
+			throw new IllegalStateException(getChannelType().toString() + " Channel Config not found") ;
+    }
 	
 	@Override
 	public NotificationChannelType getChannelType() {
@@ -34,8 +41,8 @@ public class SMSNotificationChannel implements NotificationChannel {
                 .build() ;
 
         webClient.post()
-                .uri(smsProperties.getUrl())
-                .header("Authorization", "Bearer " + smsProperties.getApiKey())
+                .uri(channelConfig.getUrl())
+                .header("Authorization", "Bearer " + channelConfig.getApiKey())
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(String.class)

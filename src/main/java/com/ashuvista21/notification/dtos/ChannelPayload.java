@@ -15,6 +15,7 @@ public class ChannelPayload {
 		String userId ;
 		String notificationType ;
 		String channelType ;
+		String notificationCategory ;
 		String recipientAddress ;
 		Map<String, Object> variables ;
 }

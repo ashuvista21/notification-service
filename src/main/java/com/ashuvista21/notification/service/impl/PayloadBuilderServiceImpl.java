@@ -36,6 +36,7 @@ public class PayloadBuilderServiceImpl implements PayloadBuilderService{
 				.userId(notification.getUserId().toString())
 				.notificationType(notification.getNotificationType().toString())
 				.channelType(channelStatus.getChannelType().toString())
+				.notificationCategory(notification.getCategory().toString())
 				.recipientAddress(userChannelContact.getValue())
 				.variables(variables)
 				.build() ;

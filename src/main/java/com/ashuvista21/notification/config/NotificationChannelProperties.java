@@ -1,6 +1,6 @@
 package com.ashuvista21.notification.config;
 
-import java.util.Map ;
+import java.util.EnumMap ;
 
 import org.springframework.boot.context.properties.ConfigurationProperties ;
 import org.springframework.context.annotation.Configuration ;
@@ -18,7 +18,7 @@ import lombok.Setter ;
 @Setter
 public class NotificationChannelProperties {
 	
-	private Map<NotificationChannelType, ChannelConfig> channels ;
+	private EnumMap<NotificationChannelType, ChannelConfig> channels = new EnumMap<>(NotificationChannelType.class) ;
 	
 	// ✅ Default config defined here
     private ChannelConfig defaultConfig ;
@@ -35,9 +35,9 @@ public class NotificationChannelProperties {
 
         channels.forEach((type, config) -> {
             if (config == null) {
-                throw new IllegalStateException("ChannelConfig is null for type: " + type);
+                throw new IllegalStateException("ChannelConfig is null for type: " + type) ;
             }
-            config.validate(type);
+            config.validate(type) ;
         });
     }
 	
@@ -47,6 +47,8 @@ public class NotificationChannelProperties {
 
         private ProcessMode processMode ;
         private String topic ;
+        private String url ;
+        private String apiKey ;
 
         // ✅ Encapsulated validation
         public void validate(NotificationChannelType type) {
@@ -56,8 +58,7 @@ public class NotificationChannelProperties {
                         "ProcessMode must be configured for channel: " + type) ;
             }
 
-            if (processMode == ProcessMode.ASYNC &&
-                    (topic == null || topic.isBlank())) {
+            if (processMode == ProcessMode.ASYNC && (topic == null || topic.isBlank())) {
                 throw new IllegalStateException(
                         "Kafka topic must be configured for ASYNC channel: " + type) ;
             }
@@ -65,7 +66,7 @@ public class NotificationChannelProperties {
 
         // ✅ Helper method (cleaner usage later)
         public boolean isAsync() {
-            return processMode == ProcessMode.ASYNC;
+            return processMode == ProcessMode.ASYNC ;
         }
     }
 }
