@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ashuvista21.notification.entities.EventOutbox;
 import com.ashuvista21.notification.enums.EventStatus;
-import com.ashuvista21.notification.exceptions.eventoutbox.EventOutboxAlreadyExists;
 import com.ashuvista21.notification.exceptions.eventoutbox.EventOutboxNotFoundException;
 import com.ashuvista21.notification.repository.EventOutboxRepository;
 import com.ashuvista21.notification.service.EventOutboxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.f4b6a3.uuid.UuidCreator ;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,11 +29,8 @@ public class EventOutboxEventServiceImpl implements EventOutboxService {
 
 	@Override
 	@Transactional
-	public void saveEvent(UUID eventId, String aggregateType, UUID aggregateId, String eventType, Object payloadObject, UUID correlationId) {
-		boolean alreadyExists = eventOutboxRepository.existsById(eventId) ;
-		
-		if(alreadyExists)
-			throw new EventOutboxAlreadyExists("Event already exists with id " + eventId) ;
+	public String createEvent(String aggregateType, String aggregateId, String topic, Object payloadObject) {
+		UUID eventId = UuidCreator.getTimeOrdered() ;
 		
 		String payload = "" ;
 		try {
@@ -45,19 +42,30 @@ public class EventOutboxEventServiceImpl implements EventOutboxService {
 		EventOutbox eventOutbox = EventOutbox.builder()
 			.eventId(eventId)
 			.aggregateId(aggregateId)
-			.aggregateType(eventType)
+			.aggregateType(aggregateType)
+			.topic(topic)
 			.payload(payload)
-			.correlationId(correlationId)
-			.status(EventStatus.CREATED.toString())
+			.status(EventStatus.UNPROCESSED.toString())
 			.build() ;
 		
 		eventOutboxRepository.save(eventOutbox) ;
+		
+		return eventId.toString() ;
 	}
 
 	@Override
-	public List<EventOutbox> getPendingEvents(int limit) {
+	@Transactional
+	public List<EventOutbox> getUnprocessedEvents(int limit) {
 		Pageable pageable = PageRequest.of(0, limit) ;
-		List<EventOutbox> events = eventOutboxRepository.findByStatusOrderByCreatedAtAsc(EventStatus.PENDING.toString(), pageable) ;
+		List<EventOutbox> events = eventOutboxRepository
+				.findByStatusOrderByCreatedAtAsc(EventStatus.UNPROCESSED.toString(), pageable) ;
+		
+		events.forEach(event -> 
+			event.setStatus(
+				EventStatus.PROCESSING.toString()
+        	)
+		) ;
+		
 		return events ;
 	}
 
@@ -78,17 +86,26 @@ public class EventOutboxEventServiceImpl implements EventOutboxService {
 		
 		// dirty checking
 		event.setStatus(EventStatus.PUBLISHED.toString()) ;
+		event.setProcessedAt(Instant.now()) ;
 		
 	}
 
 	@Override
 	@Transactional
-	public void markAsFailed(UUID eventId, String errorCode, String errorMeesage) {
+	public void markAsFailed(UUID eventId) {
 		EventOutbox event = eventOutboxRepository.findById(eventId)
 				.orElseThrow(() -> new EventOutboxNotFoundException("Event not found with id " + eventId)) ;
 		
 		// dirty checking
-		event.setStatus(EventStatus.FAIL.toString()) ;
+		event.setRetryCount(
+                event.getRetryCount() + 1
+        ) ;
+
+        if(event.getRetryCount() > 5) {
+            event.setStatus(EventStatus.MAX_RETRY.toString()) ;
+        }
+        else
+        	event.setStatus(EventStatus.FAIL.toString()) ;
 	}
 
 	@Override

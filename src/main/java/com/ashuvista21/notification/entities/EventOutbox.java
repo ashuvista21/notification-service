@@ -5,10 +5,10 @@ import java.util.UUID;
 
 import com.ashuvista21.notification.enums.EventStatus;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.Lob ;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -35,13 +35,14 @@ public class EventOutbox {
     private UUID eventId ;
 
     private String aggregateType ;   // e.g. USER_CHANNEL_CONTACT
-    private UUID aggregateId ;       // userId
-    private UUID correlationId ;
+    private String aggregateId ;
 
     private String eventType ;       // CONTACT_ADDED, CONTACT_VERIFIED
+    
+    private String topic ;
 
-    @Column(columnDefinition = "TEXT")
-    private Object payload ;         // JSON
+    @Lob
+    private String payload ;         // JSON
 
     private String status ;          // PENDING, SENT, FAILED
     
@@ -55,10 +56,6 @@ public class EventOutbox {
     @PrePersist
     public void prePersist() {
         Instant now = Instant.now() ;
-
-        if (eventId == null) {
-        	eventId = UUID.randomUUID() ; // ensure eventId always exists
-        }
 
         this.createdAt = now ;
         this.updatedAt = now ;
