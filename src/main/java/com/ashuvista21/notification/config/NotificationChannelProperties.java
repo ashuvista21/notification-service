@@ -22,11 +22,17 @@ public class NotificationChannelProperties {
 	
 	// ✅ Default config defined here
     private ChannelConfig defaultConfig ;
+    private String dispatcherTopic ;
+    private String inboundTopic ;
 	
 	@PostConstruct
     public void validate() {
 		if (defaultConfig == null) {
             throw new IllegalStateException("Default channel config must be provided") ;
+        }
+		
+		if (dispatcherTopic == null || dispatcherTopic.isBlank()) {
+            throw new IllegalStateException("Dispatcher topic config must be provided") ;
         }
 		
         if (channels == null || channels.isEmpty()) {

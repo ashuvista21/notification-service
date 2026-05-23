@@ -103,4 +103,20 @@ public class KafkaConsumerConfig {
 
         return factory ;
     }
+    
+    @Bean
+    DefaultErrorHandler errorHandler(
+            KafkaTemplate<Object, Object> template) {
+
+        DeadLetterPublishingRecoverer recoverer =
+                new DeadLetterPublishingRecoverer(template);
+
+        FixedBackOff backOff =
+                new FixedBackOff(3000L, 3);
+
+        return new DefaultErrorHandler(
+                recoverer,
+                backOff
+        );
+    }
 }

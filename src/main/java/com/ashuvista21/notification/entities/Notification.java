@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.ashuvista21.notification.enums.NotificationCategory;
 import com.ashuvista21.notification.enums.NotificationStatus;
 import com.ashuvista21.notification.enums.NotificationType;
+import com.github.f4b6a3.uuid.UuidCreator ;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,8 +16,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist ;
@@ -38,7 +37,6 @@ import lombok.Setter;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id ;
 
     @Column(nullable = false)
@@ -63,6 +61,8 @@ public class Notification {
 
     private Instant updatedAt ;
     
+    private String userEventRef ;
+    
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<NotificationChannelStatus> channels ;
     
@@ -72,6 +72,7 @@ public class Notification {
         Instant now = Instant.now() ;
         this.createdAt = now ;
         this.updatedAt = now ;
+        this.id = UuidCreator.getTimeOrdered() ;
     }
 
     // 🔥 Automatically called before update

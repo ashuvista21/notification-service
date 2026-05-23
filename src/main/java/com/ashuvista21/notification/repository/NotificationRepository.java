@@ -9,5 +9,5 @@ import com.ashuvista21.notification.entities.Notification;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
-
+	boolean existsByUserEventRef(String userEventRef) ;
 }
