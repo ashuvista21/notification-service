@@ -3,57 +3,61 @@ package com.ashuvista21.notification.enums;
 public enum NotificationType {
 
     // OTP events
-    CHANNEL_VERIFICATION(NotificationCategory.OTP, false),
-    TWO_FACTOR_AUTH(NotificationCategory.OTP, false),
-    PASSWORD_RESET_VERIFICATION(NotificationCategory.OTP, false),
-    PASSWORD_CHANGE_VERIFICATION(NotificationCategory.OTP, false),
-    TRANSACTION_OTP(NotificationCategory.OTP, false),
+    CHANNEL_VERIFICATION(NotificationCategory.OTP, false, OtpCharactersCombination.NUMERIC),
+    TWO_FACTOR_AUTH(NotificationCategory.OTP, false, OtpCharactersCombination.NUMERIC),
+    PASSWORD_RESET_VERIFICATION(NotificationCategory.OTP, false, OtpCharactersCombination.ALPHANUMERIC),
+    PASSWORD_CHANGE_VERIFICATION(NotificationCategory.OTP, false, OtpCharactersCombination.ALPHANUMERIC),
+    TRANSACTION_OTP(NotificationCategory.OTP, false, OtpCharactersCombination.NUMERIC),
 
     // INFORMATION events
-    EMAIL_VERIFICATION_SUCCESS(NotificationCategory.INFORMATION, false),
-    PASSWORD_RESET_SUCCESS(NotificationCategory.INFORMATION, false),
-    PROFILE_UPDATED(NotificationCategory.INFORMATION, false),
-    KYC_COMPLETED(NotificationCategory.INFORMATION, false),
-    ACCOUNT_ACTIVATED(NotificationCategory.INFORMATION, false),
-    ACCOUNT_DEACTIVATED(NotificationCategory.INFORMATION, false),
-    GENERAL_ANNOUNCEMENT(NotificationCategory.INFORMATION, false),
+    EMAIL_VERIFICATION_SUCCESS(NotificationCategory.INFORMATION, false, null),
+    PASSWORD_RESET_SUCCESS(NotificationCategory.INFORMATION, false, null),
+    PROFILE_UPDATED(NotificationCategory.INFORMATION, false, null),
+    KYC_COMPLETED(NotificationCategory.INFORMATION, false, null),
+    ACCOUNT_ACTIVATED(NotificationCategory.INFORMATION, false, null),
+    ACCOUNT_DEACTIVATED(NotificationCategory.INFORMATION, false, null),
+    GENERAL_ANNOUNCEMENT(NotificationCategory.INFORMATION, false, null),
     
     // TRANSACTIONAL events
-    PAYMENT_SUCCESS(NotificationCategory.TRANSACTIONAL, false),
-    PAYMENT_FAILED(NotificationCategory.TRANSACTIONAL, false),
-    REFUND_INITIATED(NotificationCategory.TRANSACTIONAL, false),
-    REFUND_COMPLETED(NotificationCategory.TRANSACTIONAL, false),
-    ORDER_PLACED(NotificationCategory.TRANSACTIONAL, false),
-    ORDER_CANCELLED(NotificationCategory.TRANSACTIONAL, false),
-    INVOICE_GENERATED(NotificationCategory.TRANSACTIONAL, false),
-    SUBSCRIPTION_STARTED(NotificationCategory.TRANSACTIONAL, false),
-    SUBSCRIPTION_RENEWED(NotificationCategory.TRANSACTIONAL, false),
-    SUBSCRIPTION_CANCELLED(NotificationCategory.TRANSACTIONAL, false),
+    PAYMENT_SUCCESS(NotificationCategory.TRANSACTIONAL, false, null),
+    PAYMENT_FAILED(NotificationCategory.TRANSACTIONAL, false, null),
+    REFUND_INITIATED(NotificationCategory.TRANSACTIONAL, false, null),
+    REFUND_COMPLETED(NotificationCategory.TRANSACTIONAL, false, null),
+    ORDER_PLACED(NotificationCategory.TRANSACTIONAL, false, null),
+    ORDER_CANCELLED(NotificationCategory.TRANSACTIONAL, false, null),
+    INVOICE_GENERATED(NotificationCategory.TRANSACTIONAL, false, null),
+    SUBSCRIPTION_STARTED(NotificationCategory.TRANSACTIONAL, false, null),
+    SUBSCRIPTION_RENEWED(NotificationCategory.TRANSACTIONAL, false, null),
+    SUBSCRIPTION_CANCELLED(NotificationCategory.TRANSACTIONAL, false, null),
     
     // SECURITY events
-    PASSWORD_CHANGED(NotificationCategory.SECURITY, false),
-    LOGIN_FROM_NEW_DEVICE(NotificationCategory.SECURITY, false),
-    SUSPICIOUS_ACTIVITY_DETECTED(NotificationCategory.SECURITY, false),
-    ACCOUNT_LOCKED(NotificationCategory.SECURITY, false),
-    FAILED_LOGIN_ATTEMPTS(NotificationCategory.SECURITY, false),
-    KYC_UPDATED(NotificationCategory.SECURITY, false),
-    SECURITY_SETTINGS_CHANGED(NotificationCategory.SECURITY, false),
+    PASSWORD_CHANGED(NotificationCategory.SECURITY, false, null),
+    LOGIN_FROM_NEW_DEVICE(NotificationCategory.SECURITY, false, null),
+    SUSPICIOUS_ACTIVITY_DETECTED(NotificationCategory.SECURITY, false, null),
+    ACCOUNT_LOCKED(NotificationCategory.SECURITY, false, null),
+    FAILED_LOGIN_ATTEMPTS(NotificationCategory.SECURITY, false, null),
+    KYC_UPDATED(NotificationCategory.SECURITY, false, null),
+    SECURITY_SETTINGS_CHANGED(NotificationCategory.SECURITY, false, null),
     
     // PROMOTIONAL events
-    DISCOUNT_OFFER(NotificationCategory.PROMOTIONAL, false),
-    CASHBACK_OFFER(NotificationCategory.PROMOTIONAL, false),
-    NEW_FEATURE_ANNOUNCEMENT(NotificationCategory.PROMOTIONAL, false),
-    PRODUCT_RECOMMENDATION(NotificationCategory.PROMOTIONAL, false),
-    SEASONAL_SALE(NotificationCategory.PROMOTIONAL, false),
-    REFERRAL_BONUS(NotificationCategory.PROMOTIONAL, false),
-    REMINDER_ABANDONED_CART(NotificationCategory.PROMOTIONAL, false) ;
+    DISCOUNT_OFFER(NotificationCategory.PROMOTIONAL, false, null),
+    CASHBACK_OFFER(NotificationCategory.PROMOTIONAL, false, null),
+    NEW_FEATURE_ANNOUNCEMENT(NotificationCategory.PROMOTIONAL, false, null),
+    PRODUCT_RECOMMENDATION(NotificationCategory.PROMOTIONAL, false, null),
+    SEASONAL_SALE(NotificationCategory.PROMOTIONAL, false, null),
+    REFERRAL_BONUS(NotificationCategory.PROMOTIONAL, false, null),
+    REMINDER_ABANDONED_CART(NotificationCategory.PROMOTIONAL, false, null) ;
 
     private final NotificationCategory category ;
     private final boolean mandatory ;
+    private final OtpCharactersCombination otpCharsType ;
 
-    NotificationType(NotificationCategory category, boolean mandatory) {
+    NotificationType(NotificationCategory category,
+    		boolean mandatory,
+    		OtpCharactersCombination otpCharsType) {
         this.category = category ;
         this.mandatory = mandatory ;
+        this.otpCharsType = otpCharsType ;
     }
 
     public NotificationCategory getCategory() {
@@ -63,4 +67,8 @@ public enum NotificationType {
     public boolean isMandatory() {
     	return mandatory ;
     }
+    
+    public OtpCharactersCombination getOtpCharsType() {
+		return otpCharsType ;
+	}
 }
