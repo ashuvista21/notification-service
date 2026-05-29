@@ -1,5 +1,6 @@
 package com.ashuvista21.notification.service.impl;
 
+import java.util.List ;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -21,7 +22,6 @@ import com.ashuvista21.notification.service.UserChannelContactService;
 import com.core.otp.dto.OtpGenerateRequest ;
 import com.core.otp.service.OtpLifecycleService ;
 
-import jakarta.annotation.Generated ;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -118,6 +118,15 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 	    }
 
 	    return contact ;
+	}
+	
+	@Override
+	public List<UserChannelContact> getUserChannelContacts(UUID userId) {
+		// get existing channel contact record for user
+		List<UserChannelContact> contacts = userChannelContactRepository
+	            .findByUserId(userId) ;
+
+	    return contacts ;
 	}
 
 	@Override

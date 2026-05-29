@@ -1,18 +1,17 @@
 package com.ashuvista21.notification.exceptions;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus ;
 
-public class EventOutboxException extends RuntimeException {
-
+public class NotificationException extends RuntimeException {
 	private static final long serialVersionUID = 1L ;
 	private final HttpStatus status ;
 	
-	public EventOutboxException(String message, HttpStatus status) {
+	public NotificationException(String message, HttpStatus status) {
 		super(message) ;
 		this.status = status ;
 	}
 	
-	public EventOutboxException(String message, HttpStatus status, Throwable cause) {
+	public NotificationException(String message, HttpStatus status, Throwable cause) {
 		super(message, cause) ;
 		this.status = status ;
 	}

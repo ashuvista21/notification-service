@@ -1,5 +1,6 @@
 package com.ashuvista21.notification.service;
 
+import java.util.List ;
 import java.util.UUID;
 
 import com.ashuvista21.notification.entities.UserChannelContact;
@@ -13,4 +14,5 @@ public interface UserChannelContactService {
 	void makePrimaryContact(UUID userId, NotificationChannelType channelType) ;
 	UserChannelContact getVerifiedUserChannelContact(UUID userId, NotificationChannelType channelType) ;
 	void triggerUserChannelContactVerification(UUID userId, NotificationChannelType channelType) ;
+	List<UserChannelContact> getUserChannelContacts(UUID userId) ;
 }

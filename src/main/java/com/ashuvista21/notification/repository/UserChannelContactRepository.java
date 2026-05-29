@@ -1,5 +1,6 @@
 package com.ashuvista21.notification.repository;
 
+import java.util.List ;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,5 @@ import com.ashuvista21.notification.enums.NotificationChannelType;
 public interface UserChannelContactRepository extends JpaRepository<UserChannelContact, Long>{
 	boolean existsByUserIdAndChannel(UUID userId, NotificationChannelType channel) ;
 	Optional<UserChannelContact> findByUserIdAndChannel(UUID userId, NotificationChannelType channel) ;
+	List<UserChannelContact> findByUserId(UUID userId) ;
 }
