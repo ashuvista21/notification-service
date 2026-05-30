@@ -1,5 +1,6 @@
 package com.ashuvista21.notification.repository;
 
+import java.util.List ;
 import java.util.Optional ;
 import java.util.UUID ;
 
@@ -12,4 +13,5 @@ import com.ashuvista21.notification.enums.NotificationType ;
 @Repository
 public interface UserNotificationTypePreferenceRepository extends JpaRepository<UserNotificationTypePreference, Long> {
 	Optional<UserNotificationTypePreference> findByUserIdAndNotificationType(UUID userId, NotificationType notificationType) ;
+	List<UserNotificationTypePreference> findByUserId(UUID userId) ;
 }

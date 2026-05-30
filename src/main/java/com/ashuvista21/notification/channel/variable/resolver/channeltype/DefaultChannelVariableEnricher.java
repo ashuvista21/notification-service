@@ -16,4 +16,11 @@ public class DefaultChannelVariableEnricher implements ChannelVariableEnricher {
     public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
         return variables ;
     }
+
+	@Override
+	public Map<String, String> defaults() {
+		return Map.of() ;
+	}
+    
+    
 }

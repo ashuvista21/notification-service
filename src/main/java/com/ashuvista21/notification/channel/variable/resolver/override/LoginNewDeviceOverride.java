@@ -20,4 +20,11 @@ public class LoginNewDeviceOverride implements NotificationTypeOverride {
 		updated.put("ipAddress", notification.getPayload().getOrDefault("ipAddress", "N/A")) ;
 		return updated ;
 	}
+
+	@Override
+	public Map<String, String> defaults() {
+		return Map.of(
+				"ipAddress", "127.0.0.1"
+			) ;
+	}
 }

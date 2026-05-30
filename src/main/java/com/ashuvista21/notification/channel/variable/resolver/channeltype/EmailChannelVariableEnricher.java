@@ -23,6 +23,7 @@ public class EmailChannelVariableEnricher implements ChannelVariableEnricher  {
         enriched.put("supportEmail", "support@yourapp.com") ;
         enriched.put("companyName", "YourApp") ;
         enriched.put("year", Year.now().getValue()) ;
+        enriched.put("templateName", "templateName") ;
 
         return enriched;
     }
@@ -35,4 +36,16 @@ public class EmailChannelVariableEnricher implements ChannelVariableEnricher  {
             default -> "New Notification" ;
         } ;
     }
+
+	@Override
+	public Map<String, String> defaults() {
+
+        return Map.of(
+        		"subject", "Email Subject",
+        		"supportEmail", "support@yourapp.com",
+        		"companyName", "YourApp",
+        		"templateName", "Template",
+        		"year", Year.now().toString()
+        	) ;
+	}
 }

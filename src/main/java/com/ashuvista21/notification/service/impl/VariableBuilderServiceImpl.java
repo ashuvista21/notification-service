@@ -4,8 +4,11 @@ import java.util.Map ;
 
 import org.springframework.stereotype.Service ;
 
+import com.ashuvista21.notification.dtos.NotificationDefaultValuesView ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.entities.NotificationChannelStatus ;
+import com.ashuvista21.notification.enums.NotificationChannelType ;
+import com.ashuvista21.notification.enums.NotificationType ;
 import com.ashuvista21.notification.factory.BaseVariableResolverFactory ;
 import com.ashuvista21.notification.factory.ChannelEnricherFactory ;
 import com.ashuvista21.notification.factory.NotificationTypeOverrideFactory ;
@@ -53,6 +56,30 @@ public class VariableBuilderServiceImpl implements VariableBuilderService{
 	    //log.debug("Variables built for type={} channel={} -> {}", type, channelType, finalVariables);
 
 	    return finalVariables ;
+	}
+	
+	@Override
+	public NotificationDefaultValuesView getDefaultValues(
+			NotificationType type,
+			NotificationChannelType channel) {
+		
+		Map<String, String> baseDefaults = baseVariableResolverFactory
+				.get(type)
+				.defaults() ;
+		
+		Map<String, String> override = notificationTypeOverrideFactory
+				.get(type)
+				.map(extra -> extra.defaults())
+				.orElse(null) ;
+		
+		Map<String, String> enricher = channelEnricherFactory
+				.get(channel)
+				.defaults() ;
+		
+		return new NotificationDefaultValuesView(
+				baseDefaults,
+				override,
+				enricher) ;
 	}
 
 }

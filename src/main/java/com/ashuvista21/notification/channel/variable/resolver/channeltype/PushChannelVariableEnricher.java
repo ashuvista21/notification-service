@@ -48,4 +48,14 @@ public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
             default -> "app://home" ;
         } ;
     }
+
+    @Override
+	public Map<String, String> defaults() {
+
+        return Map.of(
+        		"title", "Notification",
+        		"body", "You have a new update",
+        		"deepLink", "app://home"
+        	) ;
+	}
 }

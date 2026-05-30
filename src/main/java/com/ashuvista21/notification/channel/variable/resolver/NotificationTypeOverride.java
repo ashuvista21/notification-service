@@ -8,6 +8,6 @@ import com.ashuvista21.notification.enums.NotificationType ;
 public interface NotificationTypeOverride {
 	
 	NotificationType getType() ;
-
     Map<String, Object> override(Notification notification, Map<String, Object> baseVariables) ;
+    Map<String, String> defaults() ;
 }

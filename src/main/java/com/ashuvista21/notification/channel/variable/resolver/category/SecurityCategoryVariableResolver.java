@@ -29,5 +29,17 @@ public class SecurityCategoryVariableResolver implements BaseVariableResolver{
 	            "time", metadata.getOrDefault("time", System.currentTimeMillis())
 	        ) ;
 	}
+	
+	@Override
+	public Map<String, String> defaults() {
+		
+		return Map.of(
+				"name", "User",
+	            "event", "Event Name",
+	            "device", "Unknown Device",
+	            "location", "Unknown Location",
+	            "time", "Time of the event"
+	        ) ;
+	}
 
 }

@@ -28,5 +28,16 @@ public class InformationCategoryVariableResolver implements BaseVariableResolver
 	            "type", notification.getNotificationType().name()
 	        ) ;
 	}
+	
+	@Override
+	public Map<String, String> defaults() {
+		
+		return Map.of(
+				"name", "User",
+	            "message", "Information update",
+	            "timestamp", "Date and Time of the information",
+	            "type", "Notification Type"
+	        ) ;
+	}
 
 }

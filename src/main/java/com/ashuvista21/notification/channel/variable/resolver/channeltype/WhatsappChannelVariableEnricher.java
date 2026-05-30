@@ -9,7 +9,7 @@ import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnr
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 
-public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher  {
+public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher {
 	@Override
     public NotificationChannelType getChannelType() {
         return NotificationChannelType.WHATSAPP ;
@@ -40,4 +40,14 @@ public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher 
     private List<Object> buildParamsList(Map<String, Object> variables) {
         return new ArrayList<>(variables.values()) ;
     }
+
+    @Override
+	public Map<String, String> defaults() {
+
+        return Map.of(
+        		"templateName", "generic_template",
+        		"language", "en",
+        		"params", "values of all keys"
+        	) ;
+	}
 }

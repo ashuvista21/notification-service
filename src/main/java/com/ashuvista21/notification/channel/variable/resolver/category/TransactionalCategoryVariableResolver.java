@@ -22,9 +22,19 @@ public class TransactionalCategoryVariableResolver implements BaseVariableResolv
 		Map<String, Object> metadata = notification.getPayload() ;
 		
 		return Map.of(
-				"amount", metadata.get("amount"),
-	            "txnId", metadata.get("txnId"),
+				"amount", metadata.getOrDefault("amount", "Unknown Amount"),
+	            "txnId", metadata.getOrDefault("txnId", "0xx0xx0"),
 	            "status", notification.getNotificationType().name()
+	        ) ;
+	}
+	
+	@Override
+	public Map<String, String> defaults() {
+		
+		return Map.of(
+				"amount", "Unknown Amount",
+	            "txnId", "0xx0xx0",
+	            "status", "Unknown Status"
 	        ) ;
 	}
 
