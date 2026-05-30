@@ -26,5 +26,14 @@ public class OtpCategoryVariableResolver implements BaseVariableResolver{
 	            "expiry", metadata.get("expiry")
 	        ) ;
 	}
+	
+	@Override
+	public Map<String, String> defaults() {
+		
+		return Map.of(
+				"otp", "One Time Password",
+	            "expiry", "Date and Time of OTP Expiry"
+	        ) ;
+	}
 
 }

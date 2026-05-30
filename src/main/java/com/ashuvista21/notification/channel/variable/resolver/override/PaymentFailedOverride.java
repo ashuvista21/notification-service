@@ -20,4 +20,11 @@ public class PaymentFailedOverride implements NotificationTypeOverride {
 		updated.put("reason", notification.getPayload().getOrDefault("reason", "Unknown")) ;
 		return updated ;
 	}
+
+	@Override
+	public Map<String, String> defaults() {
+		return Map.of(
+				"reason", "Reason for payment failure"
+			) ;
+	}
 }

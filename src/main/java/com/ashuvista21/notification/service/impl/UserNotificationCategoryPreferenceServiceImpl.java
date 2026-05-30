@@ -1,12 +1,14 @@
 package com.ashuvista21.notification.service.impl;
 
 import java.util.HashSet;
+import java.util.List ;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ashuvista21.notification.dtos.UserPreferenceView ;
 import com.ashuvista21.notification.entities.UserNotificationCategoryPreference ;
 import com.ashuvista21.notification.enums.NotificationCategory ;
 import com.ashuvista21.notification.enums.NotificationChannelType;
@@ -50,7 +52,6 @@ public class UserNotificationCategoryPreferenceServiceImpl implements UserNotifi
     @Override
     @Transactional(readOnly = true)
     public Set<NotificationChannelType> getUserChannels(UUID userId, NotificationCategory notificationCategory) {
-
         return categoryPreferenceRepository.findByUserIdAndNotificationType(userId, notificationCategory)
                 .map(UserNotificationCategoryPreference::getChannels)
                 .orElseGet(HashSet::new) ;
@@ -68,5 +69,21 @@ public class UserNotificationCategoryPreferenceServiceImpl implements UserNotifi
                     return categoryPreferenceRepository.save(pref) ;
                 }) ;
     }
+
+	@Override
+	public List<UserPreferenceView> getUserPreferences(UUID userId) {
+		List<UserNotificationCategoryPreference> prefs = categoryPreferenceRepository.findByUserId(userId) ;
+		
+		List<UserPreferenceView> preferenceViews = prefs.stream()
+				.map(pref -> new UserPreferenceView(
+						pref.getCategory().toString(),
+						null,
+						pref.getChannels().stream()
+									.map(NotificationChannelType::toString)
+									.toArray(String[]::new)))
+				.toList() ;
+		
+		return preferenceViews ;
+	}
 
 }

@@ -8,4 +8,5 @@ import com.ashuvista21.notification.enums.NotificationChannelType ;
 public interface ChannelVariableEnricher {
 	NotificationChannelType getChannelType() ;
     Map<String, Object> enrich(Map<String, Object> variables, Notification notification) ;
+    Map<String, String> defaults() ;
 }

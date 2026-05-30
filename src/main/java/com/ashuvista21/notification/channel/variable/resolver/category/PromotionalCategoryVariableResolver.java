@@ -29,5 +29,17 @@ public class PromotionalCategoryVariableResolver implements BaseVariableResolver
 	            "cta", metadata.getOrDefault("cta", "Shop Now")
 	        ) ;
 	}
+	
+	@Override
+	public Map<String, String> defaults() {
+		
+		return Map.of(
+				"name", "User",
+	            "offerTitle", "Special Offer",
+	            "discount", "0%",
+	            "expiryDate", "Date and Time of the expiry",
+	            "cta", "Shop Now"
+	        ) ;
+	}
 
 }

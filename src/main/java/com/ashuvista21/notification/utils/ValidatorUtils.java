@@ -2,7 +2,9 @@ package com.ashuvista21.notification.utils;
 
 import java.util.UUID ;
 
+import com.ashuvista21.notification.enums.NotificationCategory ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
+import com.ashuvista21.notification.enums.NotificationType ;
 
 public class ValidatorUtils {
 	public static UUID validateUuidAndGetUuid(String uuidStr) {
@@ -32,6 +34,22 @@ public class ValidatorUtils {
 		String phoneRegex = "^\\+?[0-9]{10,15}$" ;
 		if (!phoneNumber.matches(phoneRegex)) {
 			throw new IllegalArgumentException("Invalid phone number format : " + phoneNumber) ;
+		}
+	}
+	
+	public static NotificationCategory validateCategoryOrThrow(String categoryStr) {
+		try {
+			return NotificationCategory.valueOf(categoryStr) ;
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Unsupported " + categoryStr + " category") ;
+		}
+	}
+	
+	public static NotificationType validateNotificationTypeOrThrow(String typeStr) {
+		try {
+			return NotificationType.valueOf(typeStr) ;
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Unsupported " + typeStr + " notification type") ;
 		}
 	}
 }

@@ -7,7 +7,7 @@ import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnr
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 
-public class SmsChannelVariableEnricher implements ChannelVariableEnricher  {
+public class SmsChannelVariableEnricher implements ChannelVariableEnricher {
 	@Override
     public NotificationChannelType getChannelType() {
         return NotificationChannelType.SMS ;
@@ -30,4 +30,12 @@ public class SmsChannelVariableEnricher implements ChannelVariableEnricher  {
         }
         return (String) variables.getOrDefault("message", "Notification") ;
     }
+
+    @Override
+	public Map<String, String> defaults() {
+
+        return Map.of(
+        		"message", "Notification"
+        	) ;
+	}
 }
