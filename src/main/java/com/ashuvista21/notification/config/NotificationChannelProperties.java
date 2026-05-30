@@ -24,6 +24,7 @@ public class NotificationChannelProperties {
     private ChannelConfig defaultConfig ;
     private String dispatcherTopic ;
     private String inboundTopic ;
+    private String eventInboxTopic ;
 	
 	@PostConstruct
     public void validate() {

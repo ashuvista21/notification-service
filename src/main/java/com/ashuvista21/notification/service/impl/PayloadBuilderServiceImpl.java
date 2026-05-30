@@ -28,7 +28,7 @@ public class PayloadBuilderServiceImpl implements PayloadBuilderService{
 		UserChannelContact userChannelContact = userContactService
 				.getVerifiedUserChannelContact(notification.getUserId(), channelStatus.getChannelType()) ;
 		
-		Map<String, Object> variables = variableBuilderService.buildVariables(channelStatus) ;
+		Map<String, String> variables = variableBuilderService.buildVariables(channelStatus) ;
 		
 		ChannelPayload payload = ChannelPayload.builder()
 				.notificationId(notification.getId().toString())

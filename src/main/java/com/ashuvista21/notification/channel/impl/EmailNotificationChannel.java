@@ -68,7 +68,7 @@ public class EmailNotificationChannel implements NotificationChannel {
         private String eventType ;
         private String recipient ;
         private String template ;
-        private Map<String, Object> variables ;
+        private Map<String, String> variables ;
         private Instant timestamp ;
 	}
 

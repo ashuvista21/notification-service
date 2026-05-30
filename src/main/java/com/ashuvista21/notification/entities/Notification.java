@@ -55,7 +55,7 @@ public class Notification {
     private NotificationStatus status ;
 
     @Column(columnDefinition = "TEXT")
-    private Map<String, Object> payload ;   // JSON payload containing template data
+    private Map<String, String> payload ;   // JSON payload containing template data
 
     private Instant createdAt ;
 

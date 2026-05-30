@@ -58,7 +58,7 @@ public class KafkaEventListener {
 	}
 	
 	@KafkaListener(
-			topics = "notification-event-inbox"
+			topics = "#{@notificationChannelProperties.eventInboxTopic}"
 	)
 	public void processInbox(@Payload EventInbox eventInbox, Acknowledgment ack) {
 		

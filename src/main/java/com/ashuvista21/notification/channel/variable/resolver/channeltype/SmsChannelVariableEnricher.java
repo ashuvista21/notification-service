@@ -14,9 +14,9 @@ public class SmsChannelVariableEnricher implements ChannelVariableEnricher {
     }
 
     @Override
-    public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
+    public Map<String, String> enrich(Map<String, String> variables, Notification notification) {
 
-        Map<String, Object> enriched = new HashMap<>(variables) ;
+        Map<String, String> enriched = new HashMap<>(variables) ;
 
         // Keep only essential fields for SMS
         enriched.put("message", buildSmsMessage(variables)) ;
@@ -24,7 +24,7 @@ public class SmsChannelVariableEnricher implements ChannelVariableEnricher {
         return enriched ;
     }
 
-    private String buildSmsMessage(Map<String, Object> variables) {
+    private String buildSmsMessage(Map<String, String> variables) {
         if (variables.containsKey("otp")) {
             return "Your OTP is " + variables.get("otp") ;
         }

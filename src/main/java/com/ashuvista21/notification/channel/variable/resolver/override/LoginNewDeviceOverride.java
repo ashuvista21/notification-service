@@ -15,8 +15,8 @@ public class LoginNewDeviceOverride implements NotificationTypeOverride {
 	}
 	
 	@Override
-	public Map<String, Object> override(Notification notification, Map<String, Object> baseVariables) {
-		Map<String, Object> updated = new HashMap<>(baseVariables) ;
+	public Map<String, String> override(Notification notification, Map<String, String> baseVariables) {
+		Map<String, String> updated = new HashMap<>(baseVariables) ;
 		updated.put("ipAddress", notification.getPayload().getOrDefault("ipAddress", "N/A")) ;
 		return updated ;
 	}

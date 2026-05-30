@@ -1,8 +1,6 @@
 package com.ashuvista21.notification.channel.variable.resolver.channeltype;
 
-import java.util.ArrayList ;
 import java.util.HashMap ;
-import java.util.List ;
 import java.util.Map ;
 
 import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnricher ;
@@ -16,9 +14,9 @@ public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher 
     }
 
 	@Override
-    public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
+    public Map<String, String> enrich(Map<String, String> variables, Notification notification) {
 
-        Map<String, Object> enriched = new HashMap<>(variables) ;
+        Map<String, String> enriched = new HashMap<>(variables) ;
 
         enriched.put("templateName", resolveTemplate(notification)) ;
         enriched.put("language", "en") ;
@@ -37,8 +35,8 @@ public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher 
         };
     }
     
-    private List<Object> buildParamsList(Map<String, Object> variables) {
-        return new ArrayList<>(variables.values()) ;
+    private String buildParamsList(Map<String, String> variables) {
+        return variables.values().toString() ;
     }
 
     @Override

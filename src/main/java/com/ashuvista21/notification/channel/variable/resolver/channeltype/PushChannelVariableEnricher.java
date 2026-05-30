@@ -14,9 +14,9 @@ public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
     }
 
 	@Override
-    public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
+    public Map<String, String> enrich(Map<String, String> variables, Notification notification) {
 
-        Map<String, Object> enriched = new HashMap<>(variables) ;
+        Map<String, String> enriched = new HashMap<>(variables) ;
 
         enriched.put("title", buildTitle(notification)) ;
         enriched.put("body", buildBody(variables)) ;
@@ -34,7 +34,7 @@ public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
         } ;
     }
 
-    private String buildBody(Map<String, Object> variables) {
+    private String buildBody(Map<String, String> variables) {
         if (variables.containsKey("otp")) {
             return "Your OTP is " + variables.get("otp") ;
         }

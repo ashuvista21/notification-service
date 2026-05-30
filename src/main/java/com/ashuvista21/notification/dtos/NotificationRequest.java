@@ -23,5 +23,5 @@ public class NotificationRequest {
     @NotBlank
     private String eventType ;
 
-    private Map<String, Object> variables ;
+    private Map<String, String> variables ;
 }

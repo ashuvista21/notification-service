@@ -7,6 +7,6 @@ import com.ashuvista21.notification.enums.NotificationCategory ;
 
 public interface BaseVariableResolver {
 	NotificationCategory getCategory() ;
-    Map<String, Object> resolve(Notification notification) ;
+    Map<String, String> resolve(Notification notification) ;
     Map<String, String> defaults() ;
 }
