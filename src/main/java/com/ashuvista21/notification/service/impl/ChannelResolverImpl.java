@@ -1,5 +1,6 @@
 package com.ashuvista21.notification.service.impl;
 
+import java.util.HashSet ;
 import java.util.Map ;
 import java.util.Set ;
 import java.util.UUID ;
@@ -12,6 +13,7 @@ import com.ashuvista21.notification.enums.NotificationType ;
 import com.ashuvista21.notification.service.ChannelResolver ;
 import com.ashuvista21.notification.service.UserNotificationCategoryPreferenceService ;
 import com.ashuvista21.notification.service.UserNotificationTypePreferenceService ;
+import com.ashuvista21.notification.utils.ValidatorUtils ;
 
 import lombok.RequiredArgsConstructor ;
 
@@ -30,7 +32,21 @@ public class ChannelResolverImpl implements ChannelResolver {
 			NotificationCategory.PROMOTIONAL, Set.of(NotificationChannelType.PUSH)) ;
 	
 	@Override
-	public Set<NotificationChannelType> resolve(UUID userId, NotificationType notificationType) {
+	public Set<NotificationChannelType> resolve(UUID userId, NotificationType notificationType, String eventContext) {
+		if(notificationType == NotificationType.CHANNEL_VERIFICATION || notificationType == NotificationType.CHANNEL_VERIFICATION_SUCCESS ) {
+			String channelStr = eventContext.replaceFirst("^CHANNEL_CONTACT_", "") ;
+			NotificationChannelType channel = ValidatorUtils.validateChannelOrThrow(channelStr) ;
+			
+			Set<NotificationChannelType> specialChannels = new HashSet<>(
+			        DEFAULT_CHANNELS.getOrDefault(
+			                notificationType.getCategory(),
+			                Set.of(NotificationChannelType.EMAIL))
+			) ;
+			specialChannels.add(channel) ;
+			
+			return specialChannels ;
+		}
+		
 		// 1. Check type override
 		Set<NotificationChannelType> overrideChannels = notificationTypePreferenceService.getUserChannels(userId, 
 				notificationType) ;

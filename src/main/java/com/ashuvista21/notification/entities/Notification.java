@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map ;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode ;
+import org.hibernate.type.SqlTypes ;
+
 import com.ashuvista21.notification.enums.NotificationCategory;
 import com.ashuvista21.notification.enums.NotificationStatus;
 import com.ashuvista21.notification.enums.NotificationType;
@@ -54,7 +57,8 @@ public class Notification {
     @Column(nullable = false)
     private NotificationStatus status ;
 
-    @Column(columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Map<String, String> payload ;   // JSON payload containing template data
 
     private Instant createdAt ;

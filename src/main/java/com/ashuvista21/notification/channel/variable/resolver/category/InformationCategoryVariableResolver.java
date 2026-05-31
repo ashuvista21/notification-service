@@ -23,7 +23,6 @@ public class InformationCategoryVariableResolver implements BaseVariableResolver
 		
 		return Map.of(
 				"name", metadata.getOrDefault("name", "User"),
-	            "message", metadata.getOrDefault("message", "Information update"),
 	            "timestamp", metadata.getOrDefault("timestamp", String.valueOf(System.currentTimeMillis())),
 	            "type", notification.getNotificationType().name()
 	        ) ;

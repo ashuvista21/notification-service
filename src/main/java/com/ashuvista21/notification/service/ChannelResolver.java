@@ -7,5 +7,5 @@ import com.ashuvista21.notification.enums.NotificationChannelType ;
 import com.ashuvista21.notification.enums.NotificationType ;
 
 public interface ChannelResolver {
-	Set<NotificationChannelType> resolve(UUID userId, NotificationType notificationType) ;
+	Set<NotificationChannelType> resolve(UUID userId, NotificationType notificationType, String eventContext) ;
 }

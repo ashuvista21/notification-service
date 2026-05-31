@@ -1,12 +1,16 @@
 package com.ashuvista21.notification.service.impl;
 
 import java.util.List ;
+import java.util.Map ;
 import java.util.Optional ;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ashuvista21.notification.config.NotificationChannelProperties ;
+import com.ashuvista21.notification.dtos.NotificationInboundEvent ;
+import com.ashuvista21.notification.dtos.OTPEvent ;
 import com.ashuvista21.notification.entities.NotificationOtp ;
 import com.ashuvista21.notification.entities.UserChannelContact;
 import com.ashuvista21.notification.enums.NotificationChannelType;
@@ -39,6 +43,7 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 	private final UserChannelContactRepository userChannelContactRepository ;
 	private final EventOutboxService eventOutboxService ;
 	private final OtpLifecycleService<NotificationOtp> otpLifecycleService ;
+	private final NotificationChannelProperties channelProperties ;
 	
 	@Override
 	@Transactional
@@ -129,7 +134,7 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 	}
 
 	@Override
-	public UserChannelContact getVerifiedUserChannelContact(UUID userId, NotificationChannelType channelType) {
+	public UserChannelContact getUserChannelContact(UUID userId, NotificationChannelType channelType, boolean checkVerifiedflag) {
 		// get existing channel contact record for user
 		UserChannelContact contact = userChannelContactRepository
 	            .findByUserIdAndChannel(userId, channelType)
@@ -137,7 +142,7 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 	                    "User contact not found for " + channelType)) ;
 
 	    // check verified flag
-	    if(!Boolean.TRUE.equals(contact.getVerified())) {
+	    if(checkVerifiedflag && !Boolean.TRUE.equals(contact.getVerified())) {
 	        throw new UserChannelContactNotVerifiedException(
 	                "User contact not verified for " + channelType) ;
 	    }
@@ -173,13 +178,21 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 				NotificationType.CHANNEL_VERIFICATION.toString(),
 				NotificationType.CHANNEL_VERIFICATION.getOtpCharsType().toString()) ;
 		GeneratedOtp generatedOtp = otpLifecycleService.generate(request) ;
+		OTPEvent otpEvent = new OTPEvent(
+				generatedOtp.requestId(),
+				generatedOtp.otp(),
+				generatedOtp.expiry(),
+				generatedOtp.unitTime(),
+				userId.toString(),
+				NotificationType.CHANNEL_VERIFICATION.toString(),
+				"CHANNEL_CONTACT_" + channelType.toString()) ;
 		
 		//send notification
 		eventOutboxService.createEvent(
-				"CHANNEL_CONTACT",
+				"CHANNEL_CONTACT_" + channelType.toString(),
 				request.referenceId(),
-				"notification-channel-verification",
-				generatedOtp) ;
+				channelProperties.getChannelVerificationTopic(),
+				otpEvent) ;
 		
 		return generatedOtp.requestId() ;
 	}
@@ -201,9 +214,9 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 		
 		if(otpDetails == null || !otpDetails.getEventRefId().equals(channelContact.getId().toString()))
 			throw new OtpInvalidException("No OTP request found for the user contact for channel " + channel.toString()) ;
-		if(otpDetails.getOtpPurpose().equals(NotificationType.CHANNEL_VERIFICATION.toString()))
+		if(!otpDetails.getOtpPurpose().equals(NotificationType.CHANNEL_VERIFICATION.toString()))
 			throw new OtpPurposeMismatchException("OTP request found for the user contact for channel " + channel.toString() + " but for a different purpose") ;
-		if(!otpDetails.getConsumed())
+		if(otpDetails.getConsumed())
 			throw new OtpAlreadyConsumedException("OTP has already been consumed for the user contact for channel " + channel.toString()) ;
 		if(otpDetails.getExpiryAt().isBefore(java.time.Instant.now()))
 			throw new OtpExpiredException("OTP has expired for user contact for channel " + channel.toString()) ;
@@ -217,5 +230,19 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 				channelContact.getId().toString()) ;
 		
 		otpLifecycleService.validate(request) ;
+		channelContact.setVerified(true) ;
+		
+		NotificationInboundEvent inboundEvent = new NotificationInboundEvent(
+				channelContact.getId().toString(),
+				channelContact.getUserId().toString(),
+				NotificationType.CHANNEL_VERIFICATION_SUCCESS.toString(),
+				"CHANNEL_CONTACT_" + channel.toString(),
+				Map.of("type", NotificationType.CHANNEL_VERIFICATION_SUCCESS.toString())) ;
+		
+		eventOutboxService.createEvent(
+				"CHANNEL_CONTACT_" + channel.toString(),
+				channelContact.getId().toString(),
+				channelProperties.getInboundTopic(),
+				inboundEvent) ;
 	}
 }

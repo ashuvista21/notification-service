@@ -70,7 +70,7 @@ public class UserContactController {
 		if(channel == NotificationChannelType.SMS)
 			ValidatorUtils.validatePhoneNumberFormat(request.value()) ;
 		
-		channelContactService.updateContact(
+		channelContactService.addContact(
 				userUuid,
 				channel,
 				request.value(),

@@ -9,5 +9,6 @@ public record NotificationCommand(
 		String userEventRef,
 		UUID userId,
         NotificationType notificationType,
+        String eventContext,
         Map<String, String> variables) {
 }

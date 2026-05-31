@@ -6,6 +6,7 @@ public record NotificationInboundEvent(
 		String eventId,
 		String userId,
 		String eventType,
+		String eventContext,
 		Map<String, String> payload) {
 
 }

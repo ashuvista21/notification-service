@@ -3,10 +3,13 @@ package com.ashuvista21.notification.channel.variable.resolver.channeltype;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnricher ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 
+@Component
 public class WhatsappChannelVariableEnricher implements ChannelVariableEnricher {
 	@Override
     public NotificationChannelType getChannelType() {

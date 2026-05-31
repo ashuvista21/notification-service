@@ -3,10 +3,13 @@ package com.ashuvista21.notification.channel.variable.resolver.override;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.channel.variable.resolver.NotificationTypeOverride ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationType ;
 
+@Component
 public class PaymentFailedOverride implements NotificationTypeOverride {
 	
 	@Override

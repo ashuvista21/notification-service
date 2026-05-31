@@ -25,7 +25,7 @@ public class NotificationConfigController {
 	
 	private final VariableBuilderService builderService ;
 	
-	@GetMapping("{eventType}/channel/{channel}/variables")
+	@GetMapping("/{eventType}/channel/{channel}/variables")
 	public ResponseEntity<ApiResponse<NotificationDefaultValuesView>> getConfigVariablesForEventType(
 			@PathVariable(name = "eventType") String eventTypeStr,
 			@PathVariable(name = "channel") String channelStr) {

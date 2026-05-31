@@ -25,7 +25,6 @@ public class KafkaPublisher {
 
 	    List<EventOutbox> events =
 	            eventOutboxService.getUnprocessedEvents(10) ;
-	    
 	    if(events.isEmpty()) {
 	        //log.debug("No pending outbox events");
 	        return ;
