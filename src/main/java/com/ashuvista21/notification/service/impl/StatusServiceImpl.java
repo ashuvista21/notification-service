@@ -23,6 +23,7 @@ public class StatusServiceImpl implements StatusService {
 
     // ✅ Mark channel as SUCCESS
     @Transactional
+    @Override
     public void markSuccess(UUID channelStatusId) {
 
         NotificationChannelStatus status = getChannelStatus(channelStatusId) ;
@@ -35,27 +36,34 @@ public class StatusServiceImpl implements StatusService {
 
     // ✅ Mark channel as FAILED
     @Transactional
+    @Override
     public void markFailed(UUID channelStatusId, Exception ex) {
-
         NotificationChannelStatus status = getChannelStatus(channelStatusId) ;
 
         status.setStatus(NotificationStatus.FAILED) ;
         status.setErrorMessage(ex.getMessage()) ;
-
+        
         channelStatusRepository.save(status) ;
     }
 
     // ✅ Update overall notification status
     @Transactional
+    @Override
     public void updateOverallStatus(UUID notificationId) {
-    	
     	Notification notification = getNotificationStatus(notificationId) ;
 
         NotificationStatus overallStatus = calculateOverallStatus(notification) ;
-
+        
         notification.setStatus(overallStatus) ;
 
         notificationRepository.save(notification) ;
+    }
+    
+    @Transactional
+    @Override
+    public void updateProviderMessageId(UUID channelStatusId, String correlationId) {
+    	NotificationChannelStatus status = getChannelStatus(channelStatusId) ;
+		status.setProviderMessageId(correlationId) ;
     }
 
     // 🔹 Helper: Fetch channel status safely

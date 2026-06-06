@@ -140,7 +140,6 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 	            .findByUserIdAndChannel(userId, channelType)
 	            .orElseThrow(() -> new UserChannelContactNotFoundException(
 	                    "User contact not found for " + channelType)) ;
-
 	    // check verified flag
 	    if(checkVerifiedflag && !Boolean.TRUE.equals(contact.getVerified())) {
 	        throw new UserChannelContactNotVerifiedException(

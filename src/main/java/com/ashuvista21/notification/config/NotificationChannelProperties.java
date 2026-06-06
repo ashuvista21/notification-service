@@ -26,6 +26,7 @@ public class NotificationChannelProperties {
     private String inboundTopic ;
     private String eventInboxTopic ;
     private String channelVerificationTopic ;
+    private String statusUpdateTopic ;
 	
 	@PostConstruct
     public void validate() {

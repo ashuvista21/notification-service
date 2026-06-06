@@ -49,7 +49,6 @@ public class EventOutboxEventServiceImpl implements EventOutboxService {
 			.build() ;
 		
 		eventOutboxRepository.save(eventOutbox) ;
-		
 		return eventId.toString() ;
 	}
 

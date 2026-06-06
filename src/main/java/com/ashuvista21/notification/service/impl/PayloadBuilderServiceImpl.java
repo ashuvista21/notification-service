@@ -25,8 +25,7 @@ public class PayloadBuilderServiceImpl implements PayloadBuilderService{
 	
 	@Override
 	@Transactional
-	public ChannelPayload buildPayload(NotificationChannelStatus channelStatus) {
-		Notification notification = channelStatus.getNotification() ;
+	public ChannelPayload buildPayload(NotificationChannelStatus channelStatus, Notification notification) {
 		
 		UserChannelContact userChannelContact ;
 		if(notification.getNotificationType() == NotificationType.CHANNEL_VERIFICATION)
@@ -36,7 +35,7 @@ public class PayloadBuilderServiceImpl implements PayloadBuilderService{
 			userChannelContact = userContactService
 			.getUserChannelContact(notification.getUserId(), channelStatus.getChannelType(), true) ;
 		
-		Map<String, String> variables = variableBuilderService.buildVariables(channelStatus) ;
+		Map<String, String> variables = variableBuilderService.buildVariables(channelStatus, notification) ;
 		
 		ChannelPayload payload = ChannelPayload.builder()
 				.notificationId(notification.getId().toString())

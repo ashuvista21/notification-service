@@ -40,7 +40,7 @@ public class NotificationController {
 				notificationRequest.getEventId(),
 				UUID.fromString(notificationRequest.getUserId()), 
 				NotificationType.valueOf(notificationRequest.getEventType()),
-				"RESt_API",
+				notificationRequest.getEventContext().isBlank() ? "REST_API" : notificationRequest.getEventContext(),
 				notificationRequest.getVariables()) ;
 		
         notificationService.createAndDispatch(command) ;
