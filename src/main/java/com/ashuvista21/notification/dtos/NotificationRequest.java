@@ -22,6 +22,8 @@ public class NotificationRequest {
 
     @NotBlank
     private String eventType ;
+    
+    private String eventContext ;
 
     private Map<String, String> variables ;
 }

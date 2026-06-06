@@ -6,4 +6,5 @@ public interface StatusService {
 	void markSuccess(UUID channelStatusId) ;
 	void markFailed(UUID channelStatusId, Exception ex) ;
 	void updateOverallStatus(UUID notificationId) ;
+	void updateProviderMessageId(UUID channelStatusId, String correlationId) ;
 }

@@ -25,8 +25,7 @@ public class VariableBuilderServiceImpl implements VariableBuilderService{
 	private final NotificationTypeOverrideFactory notificationTypeOverrideFactory ;
 	
 	@Override
-	public Map<String, String> buildVariables(NotificationChannelStatus channelStatus) {
-		Notification notification = channelStatus.getNotification() ;
+	public Map<String, String> buildVariables(NotificationChannelStatus channelStatus, Notification notification) {
 
 	    if (notification == null) {
 	        throw new IllegalStateException("ChannelStatus must have a Notification") ;

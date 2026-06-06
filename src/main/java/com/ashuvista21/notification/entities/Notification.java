@@ -24,6 +24,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist ;
 import jakarta.persistence.PreUpdate ;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version ;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,6 +67,9 @@ public class Notification {
     private Instant updatedAt ;
     
     private String userEventRef ;
+    
+    @Version
+    private Long version;
     
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<NotificationChannelStatus> channels ;

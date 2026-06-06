@@ -17,6 +17,7 @@ import com.ashuvista21.notification.dtos.OTPEvent ;
 import com.ashuvista21.notification.enums.NotificationType ;
 import com.ashuvista21.notification.service.EventOutboxService ;
 import com.ashuvista21.notification.service.NotificationService ;
+import com.ashuvista21.notification.service.StatusService ;
 import com.ashuvista21.notification.utils.ValidatorUtils ;
 import com.ashuvista21.notification.validator.NotificationValidator ;
 import com.fasterxml.jackson.core.JsonProcessingException ;
@@ -31,6 +32,7 @@ public class KafkaEventListener {
 	private final NotificationDispatcher notificationDispatcher ;
 	private final NotificationService notificationService ;
 	private final NotificationValidator notificationValidator ;
+	private final StatusService statusService ;
 	private final EventOutboxService eventOutboxService ;
 	private final ObjectMapper mapper ;
 
@@ -42,6 +44,20 @@ public class KafkaEventListener {
 		NotificationEvent notificationEvent = deserialize(payload, NotificationEvent.class) ;
 		
         notificationDispatcher.dispatch(notificationEvent.payload().toString()) ;
+
+        ack.acknowledge() ;
+    }
+	
+	@KafkaListener(
+            topics = "#{@notificationChannelProperties.statusUpdateTopic}"
+    )
+    public void updateOverallStatus(@Payload String payload, Acknowledgment ack) {
+		
+		NotificationEvent notificationEvent = deserialize(payload, NotificationEvent.class) ;
+		
+		UUID notificationId = ValidatorUtils.validateUuidAndGetUuid(notificationEvent.payload().toString()) ;
+		
+        statusService.updateOverallStatus(notificationId) ;
 
         ack.acknowledge() ;
     }

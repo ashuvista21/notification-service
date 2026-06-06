@@ -29,7 +29,7 @@ public class NotificationDispatcher {
 		Notification notification = getNotificationEntity(notificationId) ;
 		
 		for (NotificationChannelStatus channelStatus : notification.getChannels()) {
-			notificationExecutor.submit(() -> channelProcessor.processChannel(channelStatus.getId())) ;
+			notificationExecutor.submit(() -> channelProcessor.processChannel(channelStatus.getId(), notificationId)) ;
 		}
 	}
 	

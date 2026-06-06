@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist ;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version ;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +57,9 @@ public class NotificationChannelStatus {
     private Instant createdAt ;
 
     private Instant sentAt ;
+    
+    @Version
+    private Long version;
     
     // 🔥 Automatically called before insert
     @PrePersist
