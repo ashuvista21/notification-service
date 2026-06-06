@@ -4,10 +4,13 @@ import java.time.Year ;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnricher ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 
+@Component
 public class EmailChannelVariableEnricher implements ChannelVariableEnricher  {
 	@Override
     public NotificationChannelType getChannelType() {
@@ -15,14 +18,14 @@ public class EmailChannelVariableEnricher implements ChannelVariableEnricher  {
     }
 
 	@Override
-    public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
+    public Map<String, String> enrich(Map<String, String> variables, Notification notification) {
 
-        Map<String, Object> enriched = new HashMap<>(variables) ;
+        Map<String, String> enriched = new HashMap<>(variables) ;
 
         enriched.put("subject", buildSubject(notification)) ;
         enriched.put("supportEmail", "support@yourapp.com") ;
         enriched.put("companyName", "YourApp") ;
-        enriched.put("year", Year.now().getValue()) ;
+        enriched.put("year", Year.now().toString()) ;
         enriched.put("templateName", "templateName") ;
 
         return enriched;

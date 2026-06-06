@@ -8,6 +8,6 @@ import com.ashuvista21.notification.enums.NotificationChannelType ;
 import com.ashuvista21.notification.enums.NotificationType ;
 
 public interface VariableBuilderService {
-	Map<String, Object> buildVariables(NotificationChannelStatus channelStatus) ;
+	Map<String, String> buildVariables(NotificationChannelStatus channelStatus) ;
 	NotificationDefaultValuesView getDefaultValues(NotificationType type, NotificationChannelType channel) ;
 }

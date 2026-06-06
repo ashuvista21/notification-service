@@ -35,6 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final ChannelResolver channelResolver ;
 	private final NotificationRepository notificationRepository ;
 	private final EventOutboxService eventOutboxService ;
+	private final NotificationChannelProperties properties ;
 	
 	@Transactional
 	@Override
@@ -45,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         // 2️⃣ Resolve channels
         Set<NotificationChannelType> channels = channelResolver.resolve(notification.getUserId(),
-                                        notification.getNotificationType()) ;
+                                        notification.getNotificationType(), command.eventContext()) ;
 
         // 3️⃣ Create channel statuses
         for(NotificationChannelType channel : channels) {
@@ -67,7 +68,7 @@ public class NotificationServiceImpl implements NotificationService {
         eventOutboxService.createEvent(
         		event.originator(),
         		notificationId,
-        		new NotificationChannelProperties().getDispatcherTopic(),
+        		properties.getDispatcherTopic(),
         		event) ;
 	}
 	

@@ -3,10 +3,13 @@ package com.ashuvista21.notification.channel.variable.resolver.override;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.channel.variable.resolver.NotificationTypeOverride ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationType ;
 
+@Component
 public class PaymentFailedOverride implements NotificationTypeOverride {
 	
 	@Override
@@ -15,8 +18,8 @@ public class PaymentFailedOverride implements NotificationTypeOverride {
 	}
 	
 	@Override
-	public Map<String, Object> override(Notification notification, Map<String, Object> baseVariables) {
-		Map<String, Object> updated = new HashMap<>(baseVariables) ;
+	public Map<String, String> override(Notification notification, Map<String, String> baseVariables) {
+		Map<String, String> updated = new HashMap<>(baseVariables) ;
 		updated.put("reason", notification.getPayload().getOrDefault("reason", "Unknown")) ;
 		return updated ;
 	}

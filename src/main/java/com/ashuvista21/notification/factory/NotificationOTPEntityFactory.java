@@ -1,10 +1,13 @@
 package com.ashuvista21.notification.factory;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.entities.NotificationOtp ;
 import com.core.otp.dto.OtpGenerateRequest ;
 import com.core.otp.enums.OtpPurpose ;
 import com.core.otp.factory.OtpEntityFactory ;
 
+@Component
 public class NotificationOTPEntityFactory implements OtpEntityFactory<NotificationOtp>{
 
 	@Override

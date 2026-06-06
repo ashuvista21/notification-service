@@ -17,16 +17,16 @@ public class SecurityCategoryVariableResolver implements BaseVariableResolver{
 	}
 
 	@Override
-	public Map<String, Object> resolve(Notification notification) {
+	public Map<String, String> resolve(Notification notification) {
 		
-		Map<String, Object> metadata = notification.getPayload() ;
+		Map<String, String> metadata = notification.getPayload() ;
 		
 		return Map.of(
 				"name", metadata.getOrDefault("name", "User"),
 	            "event", notification.getNotificationType().name(),
 	            "device", metadata.getOrDefault("device", "Unknown Device"),
 	            "location", metadata.getOrDefault("location", "Unknown Location"),
-	            "time", metadata.getOrDefault("time", System.currentTimeMillis())
+	            "time", metadata.getOrDefault("time", String.valueOf(System.currentTimeMillis()))
 	        ) ;
 	}
 	

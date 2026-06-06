@@ -17,9 +17,9 @@ public class OtpCategoryVariableResolver implements BaseVariableResolver{
 	}
 
 	@Override
-	public Map<String, Object> resolve(Notification notification) {
+	public Map<String, String> resolve(Notification notification) {
 		
-		Map<String, Object> metadata = notification.getPayload() ;
+		Map<String, String> metadata = notification.getPayload() ;
 		
 		return Map.of(
 	            "otp", metadata.get("otp"),

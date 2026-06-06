@@ -26,7 +26,6 @@ public class UserNotificationCategoryPreferenceServiceImpl implements UserNotifi
     @Override
     @Transactional
     public void updateUserPreferences(UUID userId, NotificationCategory notificationCategory, Set<NotificationChannelType> preferredChannels) {
-
         UserNotificationCategoryPreference userNotificationCategoryPreference = getOrCreatePreference(userId, notificationCategory) ;
         userNotificationCategoryPreference.setChannels(preferredChannels) ;
     }
@@ -52,17 +51,17 @@ public class UserNotificationCategoryPreferenceServiceImpl implements UserNotifi
     @Override
     @Transactional(readOnly = true)
     public Set<NotificationChannelType> getUserChannels(UUID userId, NotificationCategory notificationCategory) {
-        return categoryPreferenceRepository.findByUserIdAndNotificationType(userId, notificationCategory)
+        return categoryPreferenceRepository.findByUserIdAndNotificationCategory(userId, notificationCategory)
                 .map(UserNotificationCategoryPreference::getChannels)
                 .orElseGet(HashSet::new) ;
     }
 
     private UserNotificationCategoryPreference getOrCreatePreference(UUID userId, NotificationCategory notificationCategory) {
-        return categoryPreferenceRepository.findByUserIdAndNotificationType(userId, notificationCategory)
+        return categoryPreferenceRepository.findByUserIdAndNotificationCategory(userId, notificationCategory)
                 .orElseGet(() -> {
                 	UserNotificationCategoryPreference pref = UserNotificationCategoryPreference.builder()
                             .userId(userId)
-                            .category(notificationCategory)
+                            .notificationCategory(notificationCategory)
                             .channels(new HashSet<>())
                             .build() ;
 
@@ -76,7 +75,7 @@ public class UserNotificationCategoryPreferenceServiceImpl implements UserNotifi
 		
 		List<UserPreferenceView> preferenceViews = prefs.stream()
 				.map(pref -> new UserPreferenceView(
-						pref.getCategory().toString(),
+						pref.getNotificationCategory().toString(),
 						null,
 						pref.getChannels().stream()
 									.map(NotificationChannelType::toString)

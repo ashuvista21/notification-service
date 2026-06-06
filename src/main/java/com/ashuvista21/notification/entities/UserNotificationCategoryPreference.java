@@ -57,8 +57,8 @@ public class UserNotificationCategoryPreference {
     private UUID userId ;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
-    private NotificationCategory category ;
+    @Column(name = "notification_category", nullable = false)
+    private NotificationCategory notificationCategory ;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(

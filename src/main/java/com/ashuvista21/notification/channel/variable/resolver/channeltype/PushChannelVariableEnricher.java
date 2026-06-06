@@ -3,10 +3,13 @@ package com.ashuvista21.notification.channel.variable.resolver.channeltype;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import org.springframework.stereotype.Component ;
+
 import com.ashuvista21.notification.channel.variable.resolver.ChannelVariableEnricher ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 
+@Component
 public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
 	@Override
     public NotificationChannelType getChannelType() {
@@ -14,9 +17,9 @@ public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
     }
 
 	@Override
-    public Map<String, Object> enrich(Map<String, Object> variables, Notification notification) {
+    public Map<String, String> enrich(Map<String, String> variables, Notification notification) {
 
-        Map<String, Object> enriched = new HashMap<>(variables) ;
+        Map<String, String> enriched = new HashMap<>(variables) ;
 
         enriched.put("title", buildTitle(notification)) ;
         enriched.put("body", buildBody(variables)) ;
@@ -34,7 +37,7 @@ public class PushChannelVariableEnricher implements ChannelVariableEnricher  {
         } ;
     }
 
-    private String buildBody(Map<String, Object> variables) {
+    private String buildBody(Map<String, String> variables) {
         if (variables.containsKey("otp")) {
             return "Your OTP is " + variables.get("otp") ;
         }

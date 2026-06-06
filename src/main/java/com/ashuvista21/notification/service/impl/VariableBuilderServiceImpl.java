@@ -25,7 +25,7 @@ public class VariableBuilderServiceImpl implements VariableBuilderService{
 	private final NotificationTypeOverrideFactory notificationTypeOverrideFactory ;
 	
 	@Override
-	public Map<String, Object> buildVariables(NotificationChannelStatus channelStatus) {
+	public Map<String, String> buildVariables(NotificationChannelStatus channelStatus) {
 		Notification notification = channelStatus.getNotification() ;
 
 	    if (notification == null) {
@@ -38,18 +38,18 @@ public class VariableBuilderServiceImpl implements VariableBuilderService{
 	     */
 
 		// 1️⃣ Base (Category-based)
-	    Map<String, Object> baseVariables = baseVariableResolverFactory
+	    Map<String, String> baseVariables = baseVariableResolverFactory
 				.get(notification.getNotificationType())
 				.resolve(notification) ;
 		
 		// 2️⃣ Apply override (if exists)
-	    Map<String, Object> overriddenVariables = notificationTypeOverrideFactory
+	    Map<String, String> overriddenVariables = notificationTypeOverrideFactory
 	            .get(notification.getNotificationType())
 	            .map(override -> override.override(notification, baseVariables))
 	            .orElse(baseVariables) ;
 
 	    // 3️⃣ Channel enrichment
-	    Map<String, Object> finalVariables = channelEnricherFactory
+	    Map<String, String> finalVariables = channelEnricherFactory
 	            .get(channelStatus.getChannelType())
 	            .enrich(overriddenVariables, notification) ;
 	    // Variables used inside a lambda must not be reassigned

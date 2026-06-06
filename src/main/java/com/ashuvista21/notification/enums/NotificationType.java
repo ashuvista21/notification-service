@@ -10,7 +10,7 @@ public enum NotificationType {
     TRANSACTION_OTP(NotificationCategory.OTP, false, OtpCharactersCombination.NUMERIC),
 
     // INFORMATION events
-    EMAIL_VERIFICATION_SUCCESS(NotificationCategory.INFORMATION, false, null),
+    CHANNEL_VERIFICATION_SUCCESS(NotificationCategory.INFORMATION, false, null),
     PASSWORD_RESET_SUCCESS(NotificationCategory.INFORMATION, false, null),
     PROFILE_UPDATED(NotificationCategory.INFORMATION, false, null),
     KYC_COMPLETED(NotificationCategory.INFORMATION, false, null),
@@ -47,7 +47,7 @@ public enum NotificationType {
     SEASONAL_SALE(NotificationCategory.PROMOTIONAL, false, null),
     REFERRAL_BONUS(NotificationCategory.PROMOTIONAL, false, null),
     REMINDER_ABANDONED_CART(NotificationCategory.PROMOTIONAL, false, null) ;
-
+	
     private final NotificationCategory category ;
     private final boolean mandatory ;
     private final OtpCharactersCombination otpCharsType ;

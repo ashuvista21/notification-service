@@ -12,7 +12,7 @@ public interface UserChannelContactService {
 	void disableContact(UUID userId, NotificationChannelType channelType) ;
 	void enableContact(UUID userId, NotificationChannelType channelType) ;
 	void makePrimaryContact(UUID userId, NotificationChannelType channelType) ;
-	UserChannelContact getVerifiedUserChannelContact(UUID userId, NotificationChannelType channelType) ;
+	UserChannelContact getUserChannelContact(UUID userId, NotificationChannelType channelType, boolean checkVerifiedflag) ;
 	String triggerUserChannelContactVerification(UUID userId, NotificationChannelType channelType) ;
 	List<UserChannelContact> getUserChannelContacts(UUID userId) ;
 	void verifyUserChannelContact(UUID requestId, UUID userId, NotificationChannelType channel, String otp) ;

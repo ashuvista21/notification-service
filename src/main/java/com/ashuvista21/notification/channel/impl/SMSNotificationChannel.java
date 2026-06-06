@@ -8,6 +8,7 @@ import com.ashuvista21.notification.config.NotificationChannelProperties ;
 import com.ashuvista21.notification.config.NotificationChannelProperties.ChannelConfig ;
 import com.ashuvista21.notification.dtos.ChannelPayload ;
 import com.ashuvista21.notification.enums.NotificationChannelType;
+import com.ashuvista21.notification.exceptions.channels.SmsCarrierRestrictionException ;
 
 import lombok.AllArgsConstructor ;
 import lombok.Builder ;
@@ -39,7 +40,11 @@ public class SMSNotificationChannel implements NotificationChannel {
                 .message(channelPayload.getVariables().getOrDefault("message", channelPayload.getNotificationType())
                 		.toString())
                 .build() ;
-
+		
+		//check last char is number or not
+		if(request.getMessage().trim().matches(".*[0-9]$"))
+			throw new SmsCarrierRestrictionException("Message cannot end with a number due to carrier restrictions") ;
+		
         webClient.post()
                 .uri(channelConfig.getUrl())
                 .header("Authorization", "Bearer " + channelConfig.getApiKey())

@@ -20,6 +20,6 @@ public class NotificationTypeOverrideFactory {
     }
 
     public Optional<NotificationTypeOverride> get(NotificationType type) {
-        return Optional.ofNullable(overrideMap.get(type)) ;
+    	return Optional.ofNullable(overrideMap.get(type)) ;
     }
 }
