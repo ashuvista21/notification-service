@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ashuvista21.notification.entities.EventOutbox;
 import com.ashuvista21.notification.enums.EventStatus;
 import com.ashuvista21.notification.exceptions.eventoutbox.EventOutboxNotFoundException;
+import com.ashuvista21.notification.exceptions.eventoutbox.EventSerializeException ;
 import com.ashuvista21.notification.repository.EventOutboxRepository;
 import com.ashuvista21.notification.service.EventOutboxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,7 +37,7 @@ public class EventOutboxEventServiceImpl implements EventOutboxService {
 		try {
 			payload = mapper.writeValueAsString(payloadObject);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("Failed to serialize event payload", e) ;
+			throw new EventSerializeException("Failed to serialize event payload") ;
 		}
 		
 		EventOutbox eventOutbox = EventOutbox.builder()

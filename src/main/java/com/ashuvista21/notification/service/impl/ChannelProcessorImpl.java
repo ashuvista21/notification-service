@@ -12,6 +12,9 @@ import com.ashuvista21.notification.dtos.NotificationEvent ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.entities.NotificationChannelStatus ;
 import com.ashuvista21.notification.enums.ProcessMode ;
+import com.ashuvista21.notification.exceptions.notification.NotificationChannelMismatchedException ;
+import com.ashuvista21.notification.exceptions.notification.NotificationChannelNotFoundException ;
+import com.ashuvista21.notification.exceptions.notification.NotificationNotFoundException ;
 import com.ashuvista21.notification.factory.NotificationChannelFactory ;
 import com.ashuvista21.notification.repository.NotificationChannelStatusRepository ;
 import com.ashuvista21.notification.repository.NotificationRepository ;
@@ -39,11 +42,14 @@ public class ChannelProcessorImpl implements ChannelProcessor {
 		
 		NotificationChannelStatus channelStatus = channelStatusRepository
 				.findById(notificationChannelStatusId)
-				.orElseThrow(() -> new RuntimeException("Channel not found")) ;
+				.orElseThrow(() -> new NotificationChannelNotFoundException("Channel not found for id: " + notificationChannelStatusId)) ;
 		
 		Notification notification = notificationRepository
 				.findById(notificationId)
-				.orElseThrow(() -> new RuntimeException("Notification not found")) ;
+				.orElseThrow(() -> new NotificationNotFoundException("Notification not found for id: " + notificationId)) ;
+		
+		if(!channelStatusRepository.existsByIdAndNotificationId(notificationChannelStatusId, notificationId))
+			throw new NotificationChannelMismatchedException("Channel status does not belong to notification") ;
 		
 		try {
 			ChannelConfig config = channelProperties.getChannels().getOrDefault(channelStatus.getChannelType(),

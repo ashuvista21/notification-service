@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus ;
 
 import com.ashuvista21.notification.exceptions.NotificationException ;
 
-public class NotificationNotFoundException extends NotificationException {
+public class NotificationChannelNotFoundException extends NotificationException {
 	private static final long serialVersionUID = 1L ;
 	
-	public NotificationNotFoundException(String message) {
+	public NotificationChannelNotFoundException(String message) {
 		super(message, HttpStatus.NOT_FOUND) ;
 	}
 }

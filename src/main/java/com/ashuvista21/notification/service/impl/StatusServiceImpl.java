@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional ;
 import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.entities.NotificationChannelStatus ;
 import com.ashuvista21.notification.enums.NotificationStatus ;
+import com.ashuvista21.notification.exceptions.notification.NotificationChannelMismatchedException ;
+import com.ashuvista21.notification.exceptions.notification.NotificationNotFoundException ;
 import com.ashuvista21.notification.repository.NotificationChannelStatusRepository ;
 import com.ashuvista21.notification.repository.NotificationRepository ;
 import com.ashuvista21.notification.service.StatusService ;
@@ -69,13 +71,13 @@ public class StatusServiceImpl implements StatusService {
     // 🔹 Helper: Fetch channel status safely
     private NotificationChannelStatus getChannelStatus(UUID id) {
         return channelStatusRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ChannelStatus not found: " + id));
+                .orElseThrow(() -> new NotificationChannelMismatchedException("ChannelStatus not found: " + id)) ;
     }
     
     // 🔹 Helper: Fetch notification status safely
     private Notification getNotificationStatus(UUID id) {
         return notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found: " + id));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found: " + id)) ;
     }
 
     // 🔥 Core logic: calculate overall status

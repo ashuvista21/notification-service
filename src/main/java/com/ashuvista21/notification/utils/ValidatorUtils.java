@@ -5,13 +5,18 @@ import java.util.UUID ;
 import com.ashuvista21.notification.enums.NotificationCategory ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 import com.ashuvista21.notification.enums.NotificationType ;
+import com.ashuvista21.notification.exceptions.utils.InvalidContactValueFormatException ;
+import com.ashuvista21.notification.exceptions.utils.InvalidNotificationCategoryException ;
+import com.ashuvista21.notification.exceptions.utils.InvalidNotificationChannelException ;
+import com.ashuvista21.notification.exceptions.utils.InvalidNotificationTypeException ;
+import com.ashuvista21.notification.exceptions.utils.InvalidUuidFormatException ;
 
 public class ValidatorUtils {
 	public static UUID validateUuidAndGetUuid(String uuidStr) {
 		try {
 			return UUID.fromString(uuidStr) ;
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Invalid UUID format : " + uuidStr) ;
+			throw new InvalidUuidFormatException("Invalid UUID format : " + uuidStr) ;
 		}
 	}
 	
@@ -19,21 +24,21 @@ public class ValidatorUtils {
 		try {
 			return NotificationChannelType.valueOf(channelStr) ;
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Unsupported " + channelStr + " channel") ;
+			throw new InvalidNotificationChannelException("Unsupported " + channelStr + " channel") ;
 		}
 	}
 	
 	public static void validateEmailFormat(String email) {
 		String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$" ;
 		if (!email.matches(emailRegex)) {
-			throw new IllegalArgumentException("Invalid email format : " + email) ;
+			throw new InvalidContactValueFormatException("Invalid email format : " + email) ;
 		}
 	}
 	
 	public static void validatePhoneNumberFormat(String phoneNumber) {
 		String phoneRegex = "^\\+?[0-9]{10,15}$" ;
 		if (!phoneNumber.matches(phoneRegex)) {
-			throw new IllegalArgumentException("Invalid phone number format : " + phoneNumber) ;
+			throw new InvalidContactValueFormatException("Invalid phone number format : " + phoneNumber) ;
 		}
 	}
 	
@@ -41,7 +46,7 @@ public class ValidatorUtils {
 		try {
 			return NotificationCategory.valueOf(categoryStr) ;
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Unsupported " + categoryStr + " category") ;
+			throw new InvalidNotificationCategoryException("Unsupported " + categoryStr + " category") ;
 		}
 	}
 	
@@ -49,7 +54,7 @@ public class ValidatorUtils {
 		try {
 			return NotificationType.valueOf(typeStr) ;
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Unsupported " + typeStr + " notification type") ;
+			throw new InvalidNotificationTypeException("Unsupported " + typeStr + " notification type") ;
 		}
 	}
 }
