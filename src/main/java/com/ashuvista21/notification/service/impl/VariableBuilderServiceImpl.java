@@ -9,9 +9,13 @@ import com.ashuvista21.notification.entities.Notification ;
 import com.ashuvista21.notification.entities.NotificationChannelStatus ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
 import com.ashuvista21.notification.enums.NotificationType ;
+import com.ashuvista21.notification.exceptions.notification.NotificationChannelMismatchedException ;
+import com.ashuvista21.notification.exceptions.notification.NotificationChannelNotFoundException ;
+import com.ashuvista21.notification.exceptions.notification.NotificationNotFoundException ;
 import com.ashuvista21.notification.factory.BaseVariableResolverFactory ;
 import com.ashuvista21.notification.factory.ChannelEnricherFactory ;
 import com.ashuvista21.notification.factory.NotificationTypeOverrideFactory ;
+import com.ashuvista21.notification.repository.NotificationChannelStatusRepository ;
 import com.ashuvista21.notification.service.VariableBuilderService ;
 
 import lombok.RequiredArgsConstructor ;
@@ -23,13 +27,26 @@ public class VariableBuilderServiceImpl implements VariableBuilderService{
 	private final BaseVariableResolverFactory baseVariableResolverFactory ;
 	private final ChannelEnricherFactory channelEnricherFactory ;
 	private final NotificationTypeOverrideFactory notificationTypeOverrideFactory ;
+	private final NotificationChannelStatusRepository channelStatusRepository ;
 	
 	@Override
 	public Map<String, String> buildVariables(NotificationChannelStatus channelStatus, Notification notification) {
 
 	    if (notification == null) {
-	        throw new IllegalStateException("ChannelStatus must have a Notification") ;
+	        throw new NotificationNotFoundException("Notification cannot be null") ;
 	    }
+	    
+	    if (channelStatus == null) {
+	        throw new NotificationChannelNotFoundException("Channel status cannot be null") ;
+	    }
+	    
+	    if(!channelStatusRepository.existsByIdAndNotificationId(
+	    		channelStatus.getId(),
+	    		notification.getId())) {
+	        throw new NotificationChannelMismatchedException("Channel status does not belong to the given notification") ;
+	    }
+	    
+	    
 	    /*
 	     * 1. Category → base data (business)
 	     * 2. NotificationType override → fix/specialize business data

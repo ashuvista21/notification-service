@@ -96,8 +96,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public NotificationStatusView getNotificationById(UUID userId, UUID notificationId) {
-		Notification notification = notificationRepository.findById(notificationId)
-			.orElseThrow(() -> new NotificationNotFoundException("Notification not found with id: " + notificationId)) ;
+		Notification notification = notificationRepository
+				.findById(notificationId)
+				.orElseThrow(() -> new NotificationNotFoundException("Notification not found with id : " + notificationId)) ;
 		
 		NotificationStatusView view = NotificationStatusView.builder()
 				.notificationId(notification.getId().toString())

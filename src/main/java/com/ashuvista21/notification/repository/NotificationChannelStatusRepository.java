@@ -9,5 +9,7 @@ import com.ashuvista21.notification.entities.NotificationChannelStatus;
 
 @Repository
 public interface NotificationChannelStatusRepository extends JpaRepository<NotificationChannelStatus, UUID> {
-
+	boolean existsByIdAndNotificationId(
+	        UUID channelStatusId,
+	        UUID notificationId) ;
 }

@@ -81,8 +81,9 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 		
 		// if available throw exception
 		if(alreadyExists) {
-			if(!overrideFlag)
+			if(!overrideFlag) {
 				throw new UserChannelContactAlreadyExistsException("User Contact Already Exists for " + channelType + "  type") ;
+			}
 			updateContact(userId, channelType, contact, false) ;
 			return ;
 		}

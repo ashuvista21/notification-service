@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping ;
 import org.springframework.web.bind.annotation.RestController ;
 
 import com.ashuvista21.notification.dtos.ApiResponse ;
+import com.ashuvista21.notification.dtos.NewUserRequest ;
+import com.ashuvista21.notification.dtos.NewUserRequest.ChannelContactDetails ;
 import com.ashuvista21.notification.dtos.UserChannelContactView ;
 import com.ashuvista21.notification.dtos.UserContactRequest ;
 import com.ashuvista21.notification.dtos.VerifyOtpRequest ;
 import com.ashuvista21.notification.entities.UserChannelContact ;
 import com.ashuvista21.notification.enums.NotificationChannelType ;
+import com.ashuvista21.notification.exceptions.utils.InvalidNotificationChannelException ;
 import com.ashuvista21.notification.service.UserChannelContactService ;
 import com.ashuvista21.notification.utils.ValidatorUtils ;
 
@@ -119,7 +122,7 @@ public class UserContactController {
 		return ResponseEntity.accepted()
 					.body(ApiResponse.<String>builder()
 							.status(HttpStatus.ACCEPTED)
-							.success(false)
+							.success(true)
 							.message(List.of("User contact verification triggered for channel " + channelStr + ". Please check your " + channel.toString().toLowerCase() + " for the verification code."))
 							.data(eventId)
 							.build()) ;
@@ -145,7 +148,12 @@ public class UserContactController {
 	}
 	
 	@PatchMapping("/{userId}/enable/{channel}")
-	public ResponseEntity<ApiResponse<Void>> enableUserContact(UUID userId, NotificationChannelType channel) {
+	public ResponseEntity<ApiResponse<Void>> enableUserContact(
+			@PathVariable(name = "userId") String userIdStr,
+			@PathVariable(name = "channel") String channelStr) {
+		UUID userId = ValidatorUtils.validateUuidAndGetUuid(userIdStr) ;
+		NotificationChannelType channel = ValidatorUtils.validateChannelOrThrow(channelStr) ;
+		
 		channelContactService.enableContact(userId, channel) ;
 		
 		return ResponseEntity.ok(ApiResponse.<Void>builder()
@@ -157,7 +165,12 @@ public class UserContactController {
 	}
 	
 	@PatchMapping("/{userId}/disable/{channel}")
-	public ResponseEntity<ApiResponse<Void>> disableUserContact(UUID userId, NotificationChannelType channel) {
+	public ResponseEntity<ApiResponse<Void>> disableUserContact(
+			@PathVariable(name = "userId") String userIdStr,
+			@PathVariable(name = "channel") String channelStr) {
+		UUID userId = ValidatorUtils.validateUuidAndGetUuid(userIdStr) ;
+		NotificationChannelType channel = ValidatorUtils.validateChannelOrThrow(channelStr) ;
+		
 		channelContactService.disableContact(userId, channel) ;
 		
 		return ResponseEntity.ok(ApiResponse.<Void>builder()
@@ -166,5 +179,45 @@ public class UserContactController {
 				.message(List.of("User contact disabled successfully for channel " + channel))
 				.data(null)
 				.build()) ;
+	}
+	
+	@PostMapping("/new-user")
+	public ResponseEntity<ApiResponse<String>> addNewContact(@RequestBody NewUserRequest request) {
+		UUID userId = ValidatorUtils.validateUuidAndGetUuid(request.userId()) ;
+		List<ChannelContactDetails> channelContacts = request.channelContacts() ;
+		
+		NotificationChannelType userVerificationTriggerChannel = null ;
+		int priority = NotificationChannelType.values().length + 1 ;
+		
+		for(ChannelContactDetails contact : channelContacts) {
+			NotificationChannelType channel = ValidatorUtils.validateChannelOrThrow(contact.channelType()) ;
+			
+			if(channel == NotificationChannelType.EMAIL)
+				ValidatorUtils.validateEmailFormat(contact.contactValue()) ;
+			if(channel == NotificationChannelType.SMS || channel == NotificationChannelType.WHATSAPP)
+				ValidatorUtils.validatePhoneNumberFormat(contact.contactValue()) ;
+			
+			channelContactService.addContact(userId, channel, contact.contactValue(), false) ;
+			
+			if(priority > channel.getPriority()) {
+				userVerificationTriggerChannel = channel ;
+				priority = channel.getPriority() ;
+			}
+		}
+		
+		if(userVerificationTriggerChannel == null)
+			throw new InvalidNotificationChannelException("No valid contact channels provided for the user") ;
+		
+		String eventId = channelContactService.triggerUserChannelContactVerification(userId, userVerificationTriggerChannel) ;
+		
+		return ResponseEntity.accepted()
+				.body(ApiResponse.<String>builder()
+						.status(HttpStatus.ACCEPTED)
+						.success(true)
+						.message(List.of(
+								"User contact added successfully",
+								"User contact verification triggered for channel " + userVerificationTriggerChannel + ". Please check your " + userVerificationTriggerChannel.toString().toLowerCase() + " for the verification code."))
+						.data(eventId)
+						.build()) ;
 	}
 }

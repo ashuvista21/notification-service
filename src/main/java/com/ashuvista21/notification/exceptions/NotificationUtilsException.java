@@ -1,18 +1,17 @@
 package com.ashuvista21.notification.exceptions;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus ;
 
-public class EventDescriptionException extends RuntimeException {
-	
+public class NotificationUtilsException extends RuntimeException {
 	private static final long serialVersionUID = 1L ;
 	private final HttpStatus status ;
 	
-	public EventDescriptionException(String message, HttpStatus status) {
+	public NotificationUtilsException(String message, HttpStatus status) {
 		super(message) ;
 		this.status = status ;
 	}
 	
-	public EventDescriptionException(String message, HttpStatus status, Throwable cause) {
+	public NotificationUtilsException(String message, HttpStatus status, Throwable cause) {
 		super(message, cause) ;
 		this.status = status ;
 	}
@@ -20,5 +19,4 @@ public class EventDescriptionException extends RuntimeException {
 	public HttpStatus getStatus() {
 		return status ;
 	}
-	
 }
