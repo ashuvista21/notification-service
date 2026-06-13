@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.ashuvista21.notification.entities.Notification;
+import com.ashuvista21.notification.enums.NotificationType ;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
-	boolean existsByUserEventRef(String userEventRef) ;
+	boolean existsByNotificationTypeAndUserIdAndUserEventRef(NotificationType notificationType, UUID userId, String userEventRef) ;
 }

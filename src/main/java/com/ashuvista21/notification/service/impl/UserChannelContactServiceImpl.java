@@ -27,9 +27,11 @@ import com.ashuvista21.notification.service.UserChannelContactService;
 import com.core.otp.dto.GeneratedOtp ;
 import com.core.otp.dto.OtpGenerateRequest ;
 import com.core.otp.dto.OtpValidationRequest ;
+import com.core.otp.dto.ValidatedOtp ;
 import com.core.otp.exceptions.OtpAlreadyConsumedException ;
 import com.core.otp.exceptions.OtpExpiredException ;
 import com.core.otp.exceptions.OtpInvalidException ;
+import com.core.otp.exceptions.OtpMismatchException ;
 import com.core.otp.exceptions.OtpPurposeMismatchException ;
 import com.core.otp.exceptions.OtpRetryExceededException ;
 import com.core.otp.service.OtpLifecycleService ;
@@ -229,7 +231,10 @@ public class UserChannelContactServiceImpl implements UserChannelContactService 
 				requestId.toString(),
 				channelContact.getId().toString()) ;
 		
-		otpLifecycleService.validate(request) ;
+		ValidatedOtp response = otpLifecycleService.validate(request) ;
+		
+		if(!response.isValid())
+			throw new OtpMismatchException(response.errorMessage()) ;
 		channelContact.setVerified(true) ;
 		
 		NotificationInboundEvent inboundEvent = new NotificationInboundEvent(
