@@ -6,5 +6,7 @@ public enum NotificationStatus {
 	FAILED,
 	PENDING,
 	ERROR,
-	PARTIALLY_SENT
+	PARTIALLY_SENT,
+	VOID,
+	MISSING_CHANNEL_CONFIG
 }

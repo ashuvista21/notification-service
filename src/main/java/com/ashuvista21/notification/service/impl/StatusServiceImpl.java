@@ -1,6 +1,8 @@
 package com.ashuvista21.notification.service.impl;
 
+import java.util.EnumMap ;
 import java.util.List ;
+import java.util.Map ;
 import java.util.UUID ;
 
 import org.springframework.stereotype.Service ;
@@ -47,14 +49,29 @@ public class StatusServiceImpl implements StatusService {
         
         channelStatusRepository.save(status) ;
     }
+    
+    @Transactional
+    @Override
+    public void markConfigMissing(UUID channelStatusId, Exception ex) {
+        NotificationChannelStatus status = getChannelStatus(channelStatusId) ;
+
+        status.setStatus(NotificationStatus.MISSING_CHANNEL_CONFIG) ;
+        status.setErrorMessage(ex.getMessage()) ;
+        
+        channelStatusRepository.save(status) ;
+    }
 
     // ✅ Update overall notification status
     @Transactional
     @Override
     public void updateOverallStatus(UUID notificationId) {
     	Notification notification = getNotificationStatus(notificationId) ;
+    	
+    	List<NotificationStatus> statuses = notification.getChannels().stream()
+				.map(NotificationChannelStatus::getStatus)
+				.toList() ;
 
-        NotificationStatus overallStatus = calculateOverallStatus(notification) ;
+        NotificationStatus overallStatus = calculateOverallStatus(statuses) ;
         
         notification.setStatus(overallStatus) ;
 
@@ -81,27 +98,49 @@ public class StatusServiceImpl implements StatusService {
     }
 
     // 🔥 Core logic: calculate overall status
-    private NotificationStatus calculateOverallStatus(Notification notification) {
+    private NotificationStatus calculateOverallStatus(List<NotificationStatus> statuses) {
+        
+        if(statuses.isEmpty())
+        	return NotificationStatus.VOID ;
+        
+        Map<NotificationStatus, Integer> counts = new EnumMap<>(NotificationStatus.class) ;
+        
+        for (NotificationStatus status : statuses) {
+            counts.put(status, count(counts, status) + 1) ;
+        }
+        
+        int total = statuses.size();
 
-        List<NotificationChannelStatus> channels = notification.getChannels() ;
+        int processing = count(counts, NotificationStatus.PENDING) ;
+        int sent = count(counts, NotificationStatus.SENT) ;
+        //int failed = count(counts, NotificationStatus.FAILED);
+        //int missingConfig = count(counts, NotificationStatus.MISSING_CHANNEL_CONFIG);
+        
+        // Still in progress
+        if (processing > 0) {
+            return NotificationStatus.PENDING ;
+        }
 
-        boolean allSuccess = channels.stream()
-                .allMatch(c -> c.getStatus() == NotificationStatus.SENT) ;
-
-        boolean anyFailed = channels.stream()
-                .anyMatch(c -> c.getStatus() == NotificationStatus.FAILED) ;
-
-        boolean anyInProgress = channels.stream()
-                .anyMatch(c -> c.getStatus() == NotificationStatus.PENDING) ;
-
-        if (allSuccess) {
+        // All successful
+        if (sent == total) {
             return NotificationStatus.SENT ;
         }
 
-        if (anyFailed && !anyInProgress) {
-            return NotificationStatus.FAILED ;
+        // Some successful
+        if (sent > 0) {
+            return NotificationStatus.PARTIALLY_SENT ;
         }
 
-        return NotificationStatus.PENDING ;
+        // All failed because of missing config
+        //if (missingConfig == total) {
+        //    return NotificationStatus.MISSING_CHANNEL_CONFIG ;
+        //}
+
+        // Remaining terminal state or missing config
+        return NotificationStatus.FAILED ;
+    }
+    
+    private static int count(Map<NotificationStatus, Integer> counts, NotificationStatus status) {
+    	return counts.getOrDefault(status, 0) ;
     }
 }

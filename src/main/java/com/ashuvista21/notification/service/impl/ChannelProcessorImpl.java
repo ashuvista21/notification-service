@@ -15,6 +15,8 @@ import com.ashuvista21.notification.enums.ProcessMode ;
 import com.ashuvista21.notification.exceptions.notification.NotificationChannelMismatchedException ;
 import com.ashuvista21.notification.exceptions.notification.NotificationChannelNotFoundException ;
 import com.ashuvista21.notification.exceptions.notification.NotificationNotFoundException ;
+import com.ashuvista21.notification.exceptions.userchannelcontact.UserChannelContactNotFoundException ;
+import com.ashuvista21.notification.exceptions.userchannelcontact.UserChannelContactNotVerifiedException ;
 import com.ashuvista21.notification.factory.NotificationChannelFactory ;
 import com.ashuvista21.notification.repository.NotificationChannelStatusRepository ;
 import com.ashuvista21.notification.repository.NotificationRepository ;
@@ -65,6 +67,8 @@ public class ChannelProcessorImpl implements ChannelProcessor {
 			}
 			statusService.markSuccess(notificationChannelStatusId) ;
 			
+		} catch(UserChannelContactNotFoundException | UserChannelContactNotVerifiedException e) {
+			statusService.markConfigMissing(notificationChannelStatusId, e) ;
 		} catch (Exception e) {
 			statusService.markFailed(notificationChannelStatusId, e) ;
 		} finally {
